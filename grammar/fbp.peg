@@ -1,1 +1,12 @@
 /* FBP grammar definition */
+
+start
+  = edge
+
+edge
+  = _ src:port _ "->" _ tgt:port _ {return {src:src}}
+
+port
+  = portname:[A-Z]+ {return portname.join("")}
+_
+  = " "*
