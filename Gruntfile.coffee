@@ -13,11 +13,17 @@ module.exports = ->
       files: ['spec/*.coffee', 'grammar/*.peg']
       tasks: ['test']
 
+    # BDD tests on Node.js
+    cafemocha:
+      nodejs:
+        src: ['spec/*.coffee']
+
   @loadNpmTasks 'grunt-peg'
 
   # Grunt plugins used for testing
+  @loadNpmTasks 'grunt-cafe-mocha'
   @loadNpmTasks 'grunt-contrib-watch'
 
   @registerTask 'build', ['peg']
-  @registerTask 'test', ['build']
+  @registerTask 'test', ['build', 'cafemocha']
   @registerTask 'default', ['build']
