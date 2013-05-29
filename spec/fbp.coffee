@@ -12,3 +12,12 @@ describe 'FBP parser', ->
       it 'should contain two nodes', ->
         chai.expect(graphData.nodes).to.be.an 'array'
         chai.expect(graphData.nodes.length).to.equal 2
+      it 'should contain an edge', ->
+        chai.expect(graphData.edges).to.be.an 'array'
+        chai.expect(graphData.edges.length).to.equal 1
+      it 'should contain an IIP', ->
+        chai.expect(graphData.initializers).to.be.an 'array'
+        chai.expect(graphData.initializers.length).to.equal 1
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'array'
+        chai.expect(graphData.exports.length).to.equal 0
