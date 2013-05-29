@@ -17,7 +17,8 @@
     "grunt-cafe-mocha": "~0.1.2",
     "chai": "~1.5.0",
     "mocha": "~1.9.0",
-    "grunt-contrib-watch": "~0.3.1"
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-peg": "~0.1.0"
   },
   "keywords": [],
   "scripts": {
