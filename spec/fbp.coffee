@@ -21,7 +21,7 @@ describe 'FBP parser', ->
 
   describe 'with three-statement FBP string', ->
     fbpData = """
-    'somefile.txt' -> SOURCE Read(Readfile) OUT -> In Display(Output)
+    'somefile.txt' -> SOURCE Read(ReadFile) OUT -> IN Display(Output)
     """
     graphData = null
     it 'should produce a graph JSON object', ->
