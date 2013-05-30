@@ -23,5 +23,9 @@
   "keywords": [],
   "scripts": {
     "test": "grunt test"
+  },
+  "main": "./lib/fbp",
+  "bin": {
+    "fbp": "./bin/fbp"
   }
 }

@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+// vim: set filetype=javascript:
+var path = require('path');
+var fs = require('fs');
+var parser = require('../lib/fbp');
+
+if (process.argv.length != 3) {
+  console.log("Usage:\n$ fbp somefile.fbp");
+  process.exit(0);
+}
+
+var file = path.resolve(process.cwd(), process.argv[2]);
+if (!fs.existsSync(file)) {
+  console.log("File " + file + " not found");
+  process.exit(1);
+}
+
+var result = parser.parse(fs.readFileSync(file, 'utf-8'));
+console.log(JSON.stringify(result, null, 2));
