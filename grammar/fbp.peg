@@ -73,7 +73,7 @@ LineTerminator
   = _ ","? comment? [\n\r\u2028\u2029]?
 
 comment
-  = "#" [a-zA-Z0-9 ./]*
+  = "#" (anychar)*
 
 connection 
   = x:bridge _ "->" _ y:connection { return [x,y]; }
