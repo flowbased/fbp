@@ -1,12 +1,55 @@
-/* FBP grammar definition */
+/*
+ * Classic example grammar, which recognizes simple arithmetic expressions like
+ * "2*(3+4)". The parser generated from this grammar then computes their value.
+ */
+
+{
+  var parser, edges, nodes;
+
+  parser = this;
+
+  edges = parser.edges = [];
+
+  nodes = {};
+
+  parser.addEdge = function (o) {
+    edges.push(o);
+    return edges;
+  }
+
+  parser.getResult = function () {
+    return {processes:nodes, connections:edges};
+  }
+
+}
 
 start
-  = edge
+  = edge {return parser.getResult(); }
+
+statement
+  = " "* 
 
 edge
-  = _ src:port _ "->" _ tgt:port _ {return {src:src}}
+  = _ src:leftlet _ "->" _ tgt:rightlet _ {var o={}; o[src.key]=src.value;o[tgt.key]=tgt.value; console.log(parser);  parser.addEdge(o);}
+
+prim
+  = edge
+  / port
+
+leftlet
+  = proc:process _ port:port  { return {key:"src", value:{process:proc, port:port}} }
+  / iip
+
+iip
+  = "'" iip:[a-z]+ "'"        { return {key:"data",value:iip.join("")} }
+
+rightlet 
+  = port:port _ proc:process  { return {key:"tgt", value:{process:proc, port:port}} } 
+
+process
+  = procname: [a-z]+ {return procname.join("")}
 
 port
-  = portname:[A-Z]+ {return portname.join("")}
+  = portname:[A-Z]+ {return portname.join("").toLowerCase()}
 _
   = " "*
