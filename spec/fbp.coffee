@@ -134,6 +134,51 @@ describe 'FBP parser', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
 
+  describe 'with FBP string containing URL as IIP', ->
+    fbpData = """
+    'http://localhost:5984/default' -> URL Conn(couchdb/OpenDatabase)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain a node', ->
+        chai.expect(graphData.processes).to.eql
+          Conn:
+            component: 'couchdb/OpenDatabase'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(dataphData.connections[0].data).to.equal 'http://localhost:5984/default'
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'array'
+        chai.expect(graphData.exports.length).to.equal 0
+
+  describe 'with FBP string containing RegExp as IIP', ->
+    fbpData = """
+    '_id=(\d+\.\d+\.\d*)=http://iks-project.eu/deliverable/$1' -> REGEXP MapDeliverableUri(MapPropertyValue)
+    '@type=deliverable' -> PROPERTY SetDeliverableProps(SetProperty)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain a node', ->
+        chai.expect(graphData.processes).to.eql
+          MapDeliverableUri:
+            component: 'MapPropertyValue'
+          SetDeliverableProps:
+            component: 'SetProperty'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 2
+        chai.expect(dataphData.connections[0].data).to.be.a 'string'
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'array'
+        chai.expect(graphData.exports.length).to.equal 0
+
   describe 'with an invalid FBP string', ->
     fbpData = """
     'foo' -> Display(Output)
