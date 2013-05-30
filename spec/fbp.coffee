@@ -38,6 +38,7 @@ describe 'FBP parser', ->
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
+
   describe 'with a more complex FBP string', ->
     fbpData = """
     '8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)
@@ -51,14 +52,20 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain eight nodes', ->
-        chai.expect(graphData.nodes).to.be.an 'array'
-        chai.expect(graphData.nodes.length).to.equal 8
-      it 'should contain eight edges', ->
-        chai.expect(graphData.edges).to.be.an 'array'
-        chai.expect(graphData.edges.length).to.equal 8
-      it 'should contain two IIPs', ->
-        chai.expect(graphData.initializers).to.be.an 'array'
-        chai.expect(graphData.initializers.length).to.equal 2
+        chai.expect(graphData.processes).to.be.an 'object'
+        chai.expect(graphData.processes).to.have.keys [
+          'WebServer'
+          'Profiler'
+          'Authentication'
+          'GreetUser'
+          'WriteResponse'
+          'Send'
+          'ReadTemplate'
+          'Render'
+        ]
+      it 'should contain ten edges and IIPs', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 10
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
@@ -73,15 +80,13 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain a node', ->
-        chai.expect(graphData.nodes).to.be.an 'array'
-        chai.expect(graphData.nodes.length).to.equal 1
-      it 'should contain no edges', ->
-        chai.expect(graphData.edges).to.be.an 'array'
-        chai.expect(graphData.edges.length).to.equal 0
+        chai.expect(graphData.processes).to.eql
+          Display:
+            component: 'Output'
       it 'should contain an IIP', ->
-        chai.expect(graphData.initializers).to.be.an 'array'
-        chai.expect(graphData.initializers.length).to.equal 1
-        chai.expect(dataphData.initializers[0].data).to.equal 'foo Bar BAZ'
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(graphData.connections[0].data).to.equal 'foo Bar BAZ'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
@@ -102,7 +107,7 @@ describe 'FBP parser', ->
       it 'should contain an IIP', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 1
-        chai.expect(dataphData.connections[0].data).to.equal ''
+        chai.expect(graphData.connections[0].data).to.equal ''
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
@@ -135,5 +140,3 @@ describe 'FBP parser', ->
     """
     it 'should fail with an Exception', ->
       chai.expect(-> parser.parse fbpData).to.throw Error
-
-
