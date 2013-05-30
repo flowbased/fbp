@@ -2,7 +2,24 @@ chai = require 'chai' unless chai
 parser = require '../lib/fbp'
 
 describe 'FBP parser', ->
+  it 'should provide a parse method', ->
+    chai.expect(parser.parse).to.be.a 'function'
   describe 'with simple FBP string', ->
+    fbpData = "'somefile' -> SOURCE Read(ReadFile)"
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain one node', ->
+        chai.expect(graphData.processes).to.eql
+          Read:
+            component: 'ReadFile'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+
+  describe 'with three-statement FBP string', ->
     fbpData = "'somefile.txt' -> SOURCE Read(ReadFile) OUT -> IN Display(Output)"
     graphData = null
     it 'should produce a graph JSON object', ->
@@ -10,18 +27,17 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain two nodes', ->
-        chai.expect(graphData.nodes).to.be.an 'array'
-        chai.expect(graphData.nodes.length).to.equal 2
-      it 'should contain an edge', ->
-        chai.expect(graphData.edges).to.be.an 'array'
-        chai.expect(graphData.edges.length).to.equal 1
-      it 'should contain an IIP', ->
-        chai.expect(graphData.initializers).to.be.an 'array'
-        chai.expect(graphData.initializers.length).to.equal 1
+        chai.expect(graphData.processes).to.eql
+          Read:
+            component: 'ReadFile'
+          Display:
+            component: 'Output'
+      it 'should contain an edge and an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 2
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
-
   describe 'with a more complex FBP string', ->
     fbpData = """
     '8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)
@@ -80,15 +96,13 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain a node', ->
-        chai.expect(graphData.nodes).to.be.an 'array'
-        chai.expect(graphData.nodes.length).to.equal 1
-      it 'should contain no edges', ->
-        chai.expect(graphData.edges).to.be.an 'array'
-        chai.expect(graphData.edges.length).to.equal 0
+        chai.expect(graphData.processes).to.eql
+          Display:
+            component: 'Output'
       it 'should contain an IIP', ->
-        chai.expect(graphData.initializers).to.be.an 'array'
-        chai.expect(graphData.initializers.length).to.equal 1
-        chai.expect(dataphData.initializers[0].data).to.equal ''
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(dataphData.connections[0].data).to.equal ''
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
@@ -104,16 +118,13 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain a node', ->
-        chai.expect(graphData.nodes).to.eql
+        chai.expect(graphData.processes).to.eql
           Display:
             component: 'Output'
-      it 'should contain no edges', ->
-        chai.expect(graphData.edges).to.be.an 'array'
-        chai.expect(graphData.edges.length).to.equal 0
       it 'should contain an IIP', ->
-        chai.expect(graphData.initializers).to.be.an 'array'
-        chai.expect(graphData.initializers.length).to.equal 1
-        chai.expect(dataphData.initializers[0].data).to.equal 'foo bar'
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(dataphData.connections[0].data).to.equal 'foo bar'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
