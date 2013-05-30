@@ -20,7 +20,9 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections.length).to.equal 1
 
   describe 'with three-statement FBP string', ->
-    fbpData = "'somefile.txt' -> SOURCE Read(ReadFile) OUT -> IN Display(Output)"
+    fbpData = """
+    'somefile.txt' -> SOURCE Read(Readfile) OUT -> In Display(Output)
+    """
     graphData = null
     it 'should produce a graph JSON object', ->
       graphData = parser.parse fbpData
