@@ -9,6 +9,8 @@
   parser = this;
 
   edges = parser.edges = [];
+  
+  parser.exports = []
 
   nodes = {};
 
@@ -17,7 +19,7 @@
   }
 
   parser.getResult = function () {
-    return {processes:nodes, connections:parser.processEdges(), exports:[]};
+    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports};
   }  
 
   var flatten = function (array, isShallow) {
@@ -36,6 +38,10 @@
       }
     }
     return result;
+  }
+  
+  parser.registerExports = function (priv, pub) {
+    parser.exports.push({private:priv.toLowerCase(), public:pub.toLowerCase()})
   }
 
   parser.registerEdges = function (edges) {
@@ -66,8 +72,10 @@ start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
+  = _ "EXPORT=" priv:[A-Z.]+ ":" pub:[A-Z]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
   / comment [\n\r\u2028\u2029]?
+  / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
+  
 
 LineTerminator
   = _ ","? comment? [\n\r\u2028\u2029]?

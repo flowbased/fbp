@@ -209,8 +209,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 1
         chai.expect(graphData.exports[0]).to.eql
-          private: 'READ.IN'
-          public: 'FILENAME'
+          private: 'read.in'
+          public: 'filename'
 
   describe 'with an invalid FBP string', ->
     fbpData = """
