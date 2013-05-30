@@ -1,5 +1,8 @@
-chai = require 'chai' unless chai
-parser = require '../lib/fbp'
+if typeof process is 'object' and process.title is 'node'
+  chai = require 'chai' unless chai
+  parser = require '../lib/fbp'
+else
+  parser = require 'fbp'
 
 describe 'FBP parser', ->
   it 'should provide a parse method', ->
