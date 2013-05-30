@@ -212,6 +212,36 @@ describe 'FBP parser', ->
           private: 'read.in'
           public: 'filename'
 
+  describe 'with FBP string containing node metadata', ->
+    fbpData = """
+    Read(ReadFile) OUT -> IN Display(Output:foo) 
+    # And we drop the rest
+    Display() OUT -> IN Drop(Drop:foo)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain nodes with named routes', ->
+        chai.expect(graphData.processes).to.eql
+          Read:
+            component: 'ReadFile'
+          Display:
+            component: 'Output'
+            metadata:
+              routes: ['foo']
+          Drop:
+            component: 'Drop'
+            metadata:
+              routes: ['foo']
+      it 'should contain two edges', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 2
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'array'
+        chai.expect(graphData.exports.length).to.equal 0
+
   describe 'with an invalid FBP string', ->
     fbpData = """
     'foo' -> Display(Output)
