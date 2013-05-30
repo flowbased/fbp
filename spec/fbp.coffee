@@ -165,19 +165,52 @@ describe 'FBP parser', ->
       graphData = parser.parse fbpData
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
-      it 'should contain a node', ->
+      it 'should contain two nodes', ->
         chai.expect(graphData.processes).to.eql
           MapDeliverableUri:
             component: 'MapPropertyValue'
           SetDeliverableProps:
             component: 'SetProperty'
-      it 'should contain an IIP', ->
+      it 'should contain two IIPs', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 2
         chai.expect(graphData.connections[0].data).to.be.a 'string'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
+
+  describe 'with FBP string with EXPORTs', ->
+    fbpData = """
+    EXPORT=READ.IN:FILENAME
+    Read(ReadFile) OUT -> IN Display(Output) 
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain two nodes', ->
+        chai.expect(graphData.processes).to.eql
+          Read:
+            component: 'ReadFile'
+          Display:
+            component: 'Output'
+      it 'should contain a single connection', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(graphData.connections[0]).to.eql
+          src:
+            process: 'Read'
+            port: 'out'
+          tgt:
+            process: 'Display'
+            port: 'in'
+      it 'should contain an export', ->
+        chai.expect(graphData.exports).to.be.an 'array'
+        chai.expect(graphData.exports.length).to.equal 1
+        chai.expect(graphData.exports[0]).to.eql
+          private: 'READ.IN'
+          public: 'FILENAME'
 
   describe 'with an invalid FBP string', ->
     fbpData = """
