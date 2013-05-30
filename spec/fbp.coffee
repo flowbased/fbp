@@ -129,7 +129,7 @@ describe 'FBP parser', ->
       it 'should contain an IIP', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 1
-        chai.expect(dataphData.connections[0].data).to.equal 'foo bar'
+        chai.expect(graphData.connections[0].data).to.equal 'foo bar'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
@@ -150,7 +150,7 @@ describe 'FBP parser', ->
       it 'should contain an IIP', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 1
-        chai.expect(dataphData.connections[0].data).to.equal 'http://localhost:5984/default'
+        chai.expect(graphData.connections[0].data).to.equal 'http://localhost:5984/default'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
@@ -174,7 +174,7 @@ describe 'FBP parser', ->
       it 'should contain an IIP', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 2
-        chai.expect(dataphData.connections[0].data).to.be.a 'string'
+        chai.expect(graphData.connections[0].data).to.be.a 'string'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 0
