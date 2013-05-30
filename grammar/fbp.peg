@@ -4,7 +4,7 @@
  */
 
 {
-  var parser, edges, nodes;
+  var parser, edges, nodes; 
 
   parser = this;
 
@@ -12,25 +12,69 @@
 
   nodes = {};
 
-  parser.addEdge = function (o) {
-    edges.push(o);
-    return edges;
-  }
+
   parser.addNode = function (nodeName, componentName) {
     nodes[nodeName] = {component: componentName};
   }
 
   parser.getResult = function () {
-    return {processes:nodes, connections:edges};
+    return {processes:nodes, connections:parser.edges, exports:[]};
+  }  
+
+  var flatten = function (array, isShallow) {
+    var index = -1,
+      length = array ? array.length : 0,
+      result = [];
+
+    while (++index < length) {
+      var value = array[index];
+
+      if (value instanceof Array) {
+        Array.prototype.push.apply(result, isShallow ? value : flatten(value));
+      }
+      else {
+        result.push(value);
+      }
+    }
+    return result;
   }
 
+  parser.registerEdges = function (edges) {   
+    var flats, grouped;
+    flats = flatten(edges);
+    grouped = [];
+    var current = {};
+    flats.forEach(function (o, i) {
+      if (i % 2 !== 0) { 
+        var pair = grouped[grouped.length - 1];
+        pair.tgt = o.tgt;
+        return;
+      }
+      grouped.push(o);
+    });
+    return parser.edges = grouped;
+  }
 }
 
 start
+  = edges:connection { parser.registerEdges(edges); return parser.getResult();  }
+
+
+start2
   = edge {return parser.getResult(); }
 
 statement
   = " "* 
+
+
+connection 
+  = x:bridge _ "->" _ y:connection { return [x,y]; }
+  / bridge
+
+bridge
+  = x:port _ proc:node _ y:port     { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
+  / leftlet
+  / rightlet
 
 edge
   = _ src:leftlet _ "->" _ tgt:rightlet _ {var o={}; o[src.key]=src.value;o[tgt.key]=tgt.value; console.log(parser);  parser.addEdge(o);}
@@ -40,16 +84,16 @@ prim
   / port
 
 leftlet
-  = proc:process _ port:port  { return {key:"src", value:{process:proc, port:port}} }
+  = proc:node _ port:port  { return {"src":{process:proc, port:port}} }
   / iip
 
 iip
-  = "'" iip:[a-z]+ "'"        { return {key:"data",value:iip.join("")} }
+  = "'" iip:[a-zA-Z0-9 ]+ "'"        { return {"data":iip.join("")} }
 
 rightlet 
-  = port:port _ proc:process  { return {key:"tgt", value:{process:proc, port:port}} } 
+  = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
 
-process
+node
   = node:[a-zA-Z]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
 
 component
