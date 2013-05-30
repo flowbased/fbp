@@ -21,3 +21,32 @@ Example:
 Split() OUT -> IN Count(Counter) COUNT -> IN Display(Output)
 Read() ERROR -> IN Display()
 ```
+
+### Exporting ports
+
+When FBP-defined graphs are used as subgraphs in other flows, it is often desirable to give more user-friendly names to their available ports. In the FBP language this is done by `EXPORT` statements.
+
+Example:
+
+```fbp
+EXPORT=READ.IN:FILENAME
+Read(ReadFile) OUT -> IN Display(Output)
+```
+
+This line would export the *IN* port of the *Read* node as *FILENAME*.
+
+### Node metadata
+
+It is possible to append metadata to Nodes when declaring them by adding the metadata string to the Component part after a colon (`:`).
+
+Example:
+
+```fbp
+'somefile.txt' -> SOURCE Read(ReadFile:main)
+Read() OUT -> IN Split(SplitStr:main)
+Split() OUT -> IN Count(Counter:main)
+Count() COUNT -> IN Display(Output:main)
+Read() ERROR -> IN Display()
+```
+
+In this case the route leading from *Read* to *Display* through *Split* and *Count* would be identified with the string *main*.
