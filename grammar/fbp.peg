@@ -83,6 +83,7 @@ start
 line
   = _ "EXPORT=" priv:[A-Z.]+ ":" pub:[A-Z]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
   / comment [\n\r\u2028\u2029]?
+  / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
   
 

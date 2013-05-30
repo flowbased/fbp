@@ -214,7 +214,8 @@ describe 'FBP parser', ->
 
   describe 'with FBP string containing node metadata', ->
     fbpData = """
-    Read(ReadFile) OUT -> IN Display(Output:foo) 
+    Read(ReadFile) OUT -> IN Display(Output:foo)
+    
     # And we drop the rest
     Display() OUT -> IN Drop(Drop:foo)
     """
