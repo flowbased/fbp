@@ -59,36 +59,21 @@
 start
   = edges:connection { parser.registerEdges(edges); return parser.getResult();  }
 
-
-start2
-  = edge {return parser.getResult(); }
-
-statement
-  = " "* 
-
-
 connection 
   = x:bridge _ "->" _ y:connection { return [x,y]; }
   / bridge
 
 bridge
   = x:port _ proc:node _ y:port     { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
-  / leftlet
   / rightlet
-
-edge
-  = _ src:leftlet _ "->" _ tgt:rightlet _ {var o={}; o[src.key]=src.value;o[tgt.key]=tgt.value; console.log(parser);  parser.addEdge(o);}
-
-prim
-  = edge
-  / port
+  / leftlet
 
 leftlet
   = proc:node _ port:port  { return {"src":{process:proc, port:port}} }
   / iip
 
 iip
-  = "'" iip:[a-zA-Z0-9 ]+ "'"        { return {"data":iip.join("")} }
+  = "'" iip:[a-zA-Z0-9 .]+ "'"        { return {"data":iip.join("")} }
 
 rightlet 
   = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
