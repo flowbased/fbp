@@ -3,6 +3,28 @@ FBP flow definition language parser
 
 The *fbp* library provides a parser for the [FBP domain-specific language](https://github.com/bergie/noflo#language-for-flow-based-programming) used for defining graphs for flowbased programming environments like [NoFlo](http://noflojs.org).
 
+## Usage
+
+You can use the FBP parser in your JavaScript code with the following:
+
+```javascript
+var parser = require('fbp');
+
+// Some FBP syntax code
+var fbpData = "'hello, world!' -> IN Display(Output)";
+
+// Parse into a Graph definition JSON object
+var graphDefinition = parser.parse(fbpData);
+```
+
+After this the graph definition can be loaded into a compatible flow-based runtime environment like NoFlo.
+
+### Command-line
+
+The *fbp* package also provides a command-line tool for converting FBP files into JSON:
+
+    $ fbp somefile.fbp > somefile.json
+
 ## Language for Flow-Based Programming
 
 FBP is a Domain-Specific Language (DSL) for easy graph definition. The syntax is the following:
