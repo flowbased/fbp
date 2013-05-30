@@ -104,8 +104,9 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain a node', ->
-        chai.expect(graphData.nodes).to.be.an 'array'
-        chai.expect(graphData.nodes.length).to.equal 1
+        chai.expect(graphData.nodes).to.eql
+          Display:
+            component: 'Output'
       it 'should contain no edges', ->
         chai.expect(graphData.edges).to.be.an 'array'
         chai.expect(graphData.edges.length).to.equal 0
