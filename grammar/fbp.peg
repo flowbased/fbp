@@ -14,8 +14,17 @@
 
   nodes = {};
 
-  parser.addNode = function (nodeName, componentName) {
-    nodes[nodeName] = {component: componentName};
+  parser.addNode = function (nodeName, comp) {
+    if (!nodes[nodeName]) {
+      nodes[nodeName] = {}
+    }
+    if (!!comp.comp) {
+      nodes[nodeName].component = comp.comp;
+    }
+    if (!!comp.meta) {
+      nodes[nodeName].metadata={routes:comp.meta};
+    }
+   
   }
 
   parser.getResult = function () {
@@ -81,7 +90,7 @@ LineTerminator
   = _ ","? comment? [\n\r\u2028\u2029]?
 
 comment
-  = "#" (anychar)*
+  = _ "#" (anychar)*
 
 connection 
   = x:bridge _ "->" _ y:connection { return [x,y]; }
@@ -106,7 +115,11 @@ node
   = node:[a-zA-Z]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
 
 component
-  = "(" comp:([a-zA-Z/]+)? ")" { return comp ? comp.join("") : '' }
+  = "(" comp:([a-zA-Z/]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
+
+compMeta 
+  = ":" meta:[a-zA-Z/]+  {return meta}
+
 
 port
   = portname:[A-Z.0-9]+ __ {return portname.join("").toLowerCase()}
