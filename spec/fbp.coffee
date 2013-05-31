@@ -164,6 +164,8 @@ describe 'FBP parser', ->
     fbpData = """
     '_id=(\d+\.\d+\.\d*)=http://iks-project.eu/deliverable/$1' -> REGEXP MapDeliverableUri(MapPropertyValue)
     '@type=deliverable' -> PROPERTY SetDeliverableProps(SetProperty)
+    '#foo' -> SELECTOR Get(dom/GetElement)
+    'Hi, {{ name }}' -> TEMPLATE Get
     """
     graphData = null
     it 'should produce a graph JSON object', ->
@@ -176,9 +178,11 @@ describe 'FBP parser', ->
             component: 'MapPropertyValue'
           SetDeliverableProps:
             component: 'SetProperty'
-      it 'should contain two IIPs', ->
+          Get:
+            component: 'dom/GetElement'
+      it 'should contain IIPs', ->
         chai.expect(graphData.connections).to.be.an 'array'
-        chai.expect(graphData.connections.length).to.equal 2
+        chai.expect(graphData.connections.length).to.equal 4
         chai.expect(graphData.connections[0].data).to.be.a 'string'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
