@@ -126,7 +126,7 @@ port
   = portname:[A-Z.0-9]+ __ {return portname.join("").toLowerCase()}
 
 anychar
-  = [a-zA-Z0-9 .,#:{}@+?!^=()_\-$*/\\]
+  = [a-zA-Z0-9 .,#:{}@+?!^=()_\-$*/\\\[\]{}\"&`]
 _
   = (" "*)?
 
