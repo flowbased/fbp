@@ -116,7 +116,7 @@ node
   = node:[a-zA-Z]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
 
 component
-  = "(" comp:([a-zA-Z/]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
+  = "(" comp:([a-zA-Z/\-]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
 compMeta 
   = ":" meta:[a-zA-Z/]+  {return meta}

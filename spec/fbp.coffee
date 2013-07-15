@@ -258,3 +258,18 @@ describe 'FBP parser', ->
     """
     it 'should fail with an Exception', ->
       chai.expect(-> parser.parse fbpData).to.throw Error
+
+  describe 'with a component that contains dashes in name', ->
+    fbpData = "'somefile' -> SOURCE Read(my-cool-component/ReadFile)"
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain one node', ->
+        chai.expect(graphData.processes).to.eql
+          Read:
+            component: 'my-cool-component/ReadFile'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
