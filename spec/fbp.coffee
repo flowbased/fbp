@@ -162,7 +162,7 @@ describe 'FBP parser', ->
 
   describe 'with FBP string containing RegExp as IIP', ->
     fbpData = """
-    '_id=(\d+\.\d+\.\d*)=http://iks-project.eu/deliverable/$1' -> REGEXP MapDeliverableUri(MapPropertyValue)
+    '_id=(\d+\.\d+\.\d*)=http://iks-project.eu/%deliverable/$1' -> REGEXP MapDeliverableUri(MapPropertyValue)
     '@type=deliverable' -> PROPERTY SetDeliverableProps(SetProperty)
     '#foo' -> SELECTOR Get(dom/GetElement)
     'Hi, {{ name }}' -> TEMPLATE Get
