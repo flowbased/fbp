@@ -163,6 +163,7 @@ describe 'FBP parser', ->
   describe 'with FBP string containing RegExp as IIP', ->
     fbpData = """
     '_id=(\d+\.\d+\.\d*)=http://iks-project.eu/%deliverable/$1' -> REGEXP MapDeliverableUri(MapPropertyValue)
+    'path=/_(?!(includes|layouts)' -> REGEXP MapDeliverableUri(MapPropertyValue)
     '@type=deliverable' -> PROPERTY SetDeliverableProps(SetProperty)
     '#foo' -> SELECTOR Get(dom/GetElement)
     'Hi, {{ name }}' -> TEMPLATE Get
@@ -182,7 +183,7 @@ describe 'FBP parser', ->
             component: 'dom/GetElement'
       it 'should contain IIPs', ->
         chai.expect(graphData.connections).to.be.an 'array'
-        chai.expect(graphData.connections.length).to.equal 4
+        chai.expect(graphData.connections.length).to.equal 5
         chai.expect(graphData.connections[0].data).to.be.a 'string'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'array'
