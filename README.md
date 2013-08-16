@@ -44,6 +44,21 @@ Split() OUT -> IN Count(Counter) COUNT -> IN Display(Output)
 Read() ERROR -> IN Display()
 ```
 
+The syntax also supports blank lines and comments. Comments start with the `#` character.
+
+Example with the same graph than above :
+
+```fbp
+# Read the content of "somefile.txt" and split it by line
+'somefile.txt' -> SOURCE Read(ReadFile) OUT -> IN Split(SplitStr)
+
+# Count the lines and display the result
+Split() OUT -> IN Count(Counter) COUNT -> IN Display(Output)
+
+# The read errors are also displayed
+Read() ERROR -> IN Display()
+```
+
 ### Exporting ports
 
 When FBP-defined graphs are used as subgraphs in other flows, it is often desirable to give more user-friendly names to their available ports. In the FBP language this is done by `EXPORT` statements.
