@@ -107,7 +107,7 @@ leftlet
   = proc:node _ port:port  { return {"src":{process:proc, port:port}} }  
 
 iip
-  = "'" iip:(anychar)* "'"        { return {"data":iip.join("")} }
+  = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
 
 rightlet 
   = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
@@ -127,6 +127,11 @@ port
 
 anychar
   = [a-zA-Z0-9 .,#:{}@+?!^=()_\-$*/\\\[\]{}\"&`%\|]
+
+iipchar
+  = [\\]['] { return "'"; }
+  / [^']
+
 _
   = (" "*)?
 
