@@ -274,3 +274,37 @@ describe 'FBP parser', ->
       it 'should contain an IIP', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 1
+
+  describe 'with commas to separate statements', ->
+    fbpData = "'Hello' -> IN Foo(Component), 'World' -> IN Bar(OtherComponent), Foo OUT -> DATA Bar"
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain two nodes', ->
+        chai.expect(graphData.processes).to.eql
+          Foo:
+            component: 'Component'
+          Bar:
+            component: 'OtherComponent'
+      it 'should contain two IIPs and one edge', ->
+        chai.expect(graphData.connections).to.eql [
+            data: 'Hello'
+            tgt:
+              process: 'Foo'
+              port: 'in'
+          ,
+            data: 'World'
+            tgt:
+              process: 'Bar'
+              port: 'in'
+          ,
+            src:
+              process: 'Foo'
+              port: 'out'
+            tgt:
+              process: 'Bar'
+              port: 'data'
+
+        ]
