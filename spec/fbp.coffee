@@ -308,3 +308,23 @@ describe 'FBP parser', ->
               port: 'data'
 
         ]
+
+  describe 'with underscores and numbers in ports, nodes, and components', ->
+    fbpData = "'Hello 09' -> IN_2 Foo_Node_42(Component_15)"
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain one node', ->
+        chai.expect(graphData.processes).to.eql
+          Foo_Node_42:
+            component: 'Component_15'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(graphData.connections[0]).to.eql
+          data: 'Hello 09'
+          tgt:
+            process: 'Foo_Node_42'
+            port: 'in_2'
