@@ -81,7 +81,7 @@ start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:[A-Z.]+ ":" pub:[A-Z]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
+  = _ "EXPORT=" priv:[A-Z.0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -113,17 +113,17 @@ rightlet
   = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
 
 node
-  = node:[a-zA-Z]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
+  = node:[a-zA-Z0-9_]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
 
 component
-  = "(" comp:([a-zA-Z/\-]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
+  = "(" comp:([a-zA-Z/\-0-9_]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
 compMeta 
   = ":" meta:[a-zA-Z/]+  {return meta}
 
 
 port
-  = portname:[A-Z.0-9]+ __ {return portname.join("").toLowerCase()}
+  = portname:[A-Z.0-9_]+ __ {return portname.join("").toLowerCase()}
 
 anychar
   = [^\n\r\u2028\u2029]
