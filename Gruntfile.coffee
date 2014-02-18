@@ -34,6 +34,8 @@ module.exports = ->
     cafemocha:
       nodejs:
         src: ['spec/*.coffee']
+        options:
+          reporter: 'spec'
 
     # CoffeeScript compilation
     coffee:

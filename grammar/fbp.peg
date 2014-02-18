@@ -7,10 +7,11 @@
   var parser, edges, nodes; 
 
   parser = this;
+  delete parser.exports;
+  delete parser.inports;
+  delete parser.outports;
 
   edges = parser.edges = [];
-  
-  parser.exports = []
 
   nodes = {};
 
@@ -28,7 +29,7 @@
   }
 
   parser.getResult = function () {
-    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports};
+    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports, inports: parser.inports, outports: parser.outports};
   }  
 
   var flatten = function (array, isShallow) {
@@ -50,7 +51,22 @@
   }
   
   parser.registerExports = function (priv, pub) {
+    if (!parser.exports) {
+      parser.exports = [];
+    }
     parser.exports.push({private:priv.toLowerCase(), public:pub.toLowerCase()})
+  }
+  parser.registerInports = function (node, port, pub) {
+    if (!parser.inports) {
+      parser.inports = [];
+    }
+    parser.inports.push({process:node, port:port.toLowerCase(), public:pub.toLowerCase()})
+  }
+  parser.registerOutports = function (node, port, pub) {
+    if (!parser.outports) {
+      parser.outports = [];
+    }
+    parser.outports.push({process:node, port:port.toLowerCase(), public:pub.toLowerCase()})
   }
 
   parser.registerEdges = function (edges) {
@@ -81,11 +97,12 @@ start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:[A-Z.0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
+  = _ "EXPORT=" priv:[A-Za-z.0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
+  / _ "INPORT=" node:[A-Za-z0-9_]+ "." port:[A-Z0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerInports(node.join(""),port.join(""),pub.join(""))}
+  / _ "OUTPORT=" node:[A-Za-z0-9_]+ "." port:[A-Z0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerOutports(node.join(""),port.join(""),pub.join(""))}
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
-  
 
 LineTerminator
   = _ ","? comment? [\n\r\u2028\u2029]?

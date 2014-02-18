@@ -61,12 +61,12 @@ Read() ERROR -> IN Display()
 
 ### Exporting ports
 
-When FBP-defined graphs are used as subgraphs in other flows, it is often desirable to give more user-friendly names to their available ports. In the FBP language this is done by `EXPORT` statements.
+When FBP-defined graphs are used as subgraphs in other flows, it is often desirable to give more user-friendly names to their available ports. In the FBP language this is done by `INPORT` and `OUTPORT` statements.
 
 Example:
 
 ```fbp
-EXPORT=READ.IN:FILENAME
+INPORT=Read.IN:FILENAME
 Read(ReadFile) OUT -> IN Display(Output)
 ```
 
