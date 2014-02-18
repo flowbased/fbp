@@ -1,4 +1,4 @@
-if typeof process is 'object' and process.title is 'node'
+if typeof process isnt 'undefined' and process.execPath and process.execPath.indexOf('node') isnt -1
   chai = require 'chai' unless chai
   parser = require '../lib/fbp'
 else
