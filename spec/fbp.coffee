@@ -225,23 +225,18 @@ describe 'FBP parser', ->
             process: 'Display'
             port: 'in'
       it 'should contain two inports', ->
-        chai.expect(graphData.inports).to.be.an 'array'
-        chai.expect(graphData.inports.length).to.equal 2
-        chai.expect(graphData.inports[0]).to.eql
+        chai.expect(graphData.inports).to.be.an 'object'
+        chai.expect(graphData.inports.filename).to.eql
           process: 'Read'
           port: 'in'
-          public: 'filename'
-        chai.expect(graphData.inports[1]).to.eql
+        chai.expect(graphData.inports.options).to.eql
           process: 'Display'
           port: 'options'
-          public: 'options'
       it 'should contain an outport', ->
-        chai.expect(graphData.outports).to.be.an 'array'
-        chai.expect(graphData.outports.length).to.equal 1
-        chai.expect(graphData.outports[0]).to.eql
+        chai.expect(graphData.outports).to.be.an 'object'
+        chai.expect(graphData.outports.out).to.eql
           process: 'Display'
           port: 'out'
-          public: 'out'
 
   describe 'with FBP string with legacy EXPORTs', ->
     fbpData = """
