@@ -86,4 +86,10 @@ Count() COUNT -> IN Display(Output:main)
 Read() ERROR -> IN Display()
 ```
 
-In this case the route leading from *Read* to *Display* through *Split* and *Count* would be identified with the string *main*.
+In this case the route leading from *Read* to *Display* through *Split* and *Count* would be identified with the string *main*. You can also provide arbitrary metadata keys with the `=` syntax:
+
+```fbp
+Read() OUT -> IN Split(SplitStr:foo=bar,baz=123)
+```
+
+In this case the *Split* node would contain the metadata keys `foo` and `baz` with values `bar` and `123`.
