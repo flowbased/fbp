@@ -23,7 +23,15 @@
       nodes[nodeName].component = comp.comp;
     }
     if (!!comp.meta) {
-      nodes[nodeName].metadata={routes:comp.meta};
+      var metadata = {};
+      for (var i = 0; i < comp.meta.length; i++) {
+        var item = comp.meta[i].split('=');
+        if (item.length === 1) {
+          item = ['routes', item[0]];
+        }
+        metadata[item[0]] = item[1];
+      }
+      nodes[nodeName].metadata=metadata;
     }
    
   }
@@ -136,7 +144,7 @@ component
   = "(" comp:([a-zA-Z/\-0-9_]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
 compMeta 
-  = ":" meta:[a-zA-Z/]+  {return meta}
+  = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
 
 port

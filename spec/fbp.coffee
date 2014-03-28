@@ -273,10 +273,10 @@ describe 'FBP parser', ->
 
   describe 'with FBP string containing node metadata', ->
     fbpData = """
-    Read(ReadFile) OUT -> IN Display(Output:foo)
+    Read(ReadFile) OUT -> IN Display(Output:foo=bar)
     
     # And we drop the rest
-    Display OUT -> IN Drop(Drop:foo)
+    Display OUT -> IN Drop(Drop:foo=baz,baz=/foo/bar)
     """
     graphData = null
     it 'should produce a graph JSON object', ->
@@ -289,11 +289,12 @@ describe 'FBP parser', ->
         Display:
           component: 'Output'
           metadata:
-            routes: ['foo']
+            foo: 'bar'
         Drop:
           component: 'Drop'
           metadata:
-            routes: ['foo']
+            foo: 'baz'
+            baz: '/foo/bar'
     it 'should contain two edges', ->
       chai.expect(graphData.connections).to.be.an 'array'
       chai.expect(graphData.connections.length).to.equal 2
