@@ -378,3 +378,51 @@ describe 'FBP parser', ->
           tgt:
             process: 'Foo_Node_42'
             port: 'in_2'
+
+  describe 'with FBP string containing port indexes', ->
+    fbpData = """
+    Read(ReadFile) OUT[1] -> IN Display(Output:foo=bar)
+    
+    # And we drop the rest
+    Display OUT -> IN[0] Drop(Drop:foo=baz,baz=/foo/bar)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    it 'should contain nodes with named routes', ->
+      chai.expect(graphData.processes).to.eql
+        Read:
+          component: 'ReadFile'
+        Display:
+          component: 'Output'
+          metadata:
+            foo: 'bar'
+        Drop:
+          component: 'Drop'
+          metadata:
+            foo: 'baz'
+            baz: '/foo/bar'
+    it 'should contain two edges', ->
+      chai.expect(graphData.connections).to.be.an 'array'
+      chai.expect(graphData.connections).to.eql [
+        src:
+          process: 'Read'
+          port: 'out'
+          index: 1
+        tgt:
+          process: 'Display'
+          port: 'in'
+      ,
+        src:
+          process: 'Display'
+          port: 'out'
+        tgt:
+          process: 'Drop'
+          port: 'in'
+          index: 0
+      ]
+    it 'should contain no exports', ->
+      chai.expect(graphData.exports).to.be.an 'undefined'
+      chai.expect(graphData.inports).to.be.an 'undefined'
+      chai.expect(graphData.outports).to.be.an 'undefined'

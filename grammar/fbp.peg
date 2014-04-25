@@ -130,12 +130,14 @@ bridge
 
 leftlet
   = proc:node _ port:port  { return {"src":{process:proc, port:port}} }  
+  / proc:node _ port:portWithIndex  { return {"src":{process:proc, port:port.port, index: port.index}} }
 
 iip
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
 
 rightlet 
   = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
+  / port:portWithIndex _ proc:node  { return {"tgt":{process:proc, port:port.port, index: port.index}} }
 
 node
   = node:[a-zA-Z0-9_]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
@@ -149,6 +151,9 @@ compMeta
 
 port
   = portname:[A-Z.0-9_]+ __ {return portname.join("").toLowerCase()}
+
+portWithIndex
+  = portname:[A-Z.0-9_]+ "[" portindex:[0-9]+ "]"  __ {return { port: portname.join("").toLowerCase(), index: parseInt(portindex.join('')) }}
 
 anychar
   = [^\n\r\u2028\u2029]
