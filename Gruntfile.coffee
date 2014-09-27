@@ -10,20 +10,10 @@ module.exports = ->
         outputFile: 'lib/fbp.js'
 
     # Build the browser Component
-    component_build:
-      'fbp':
-        output: './browser/'
-        config: './component.json'
-        scripts: true
-        styles: false
-
-    # JavaScript minification for the browser
-    uglify:
-      options:
-        report: 'min'
-      noflo:
+    noflo_browser:
+      build:
         files:
-          './browser/fbp.min.js': ['./browser/fbp.js']
+          'browser/fbp.js': ['component.json']
 
     # Automated recompilation and testing when developing
     watch:
@@ -54,8 +44,7 @@ module.exports = ->
 
   # Grunt plugins used for building
   @loadNpmTasks 'grunt-peg'
-  @loadNpmTasks 'grunt-component-build'
-  @loadNpmTasks 'grunt-contrib-uglify'
+  @loadNpmTasks 'grunt-noflo-browser'
 
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-cafe-mocha'
@@ -63,6 +52,6 @@ module.exports = ->
   @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-contrib-watch'
 
-  @registerTask 'build', ['peg', 'component_build', 'uglify']
+  @registerTask 'build', ['peg', 'noflo_browser']
   @registerTask 'test', ['build', 'coffee', 'cafemocha', 'mocha_phantomjs']
   @registerTask 'default', ['build']
