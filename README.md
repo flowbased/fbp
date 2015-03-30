@@ -34,14 +34,14 @@ FBP is a Domain-Specific Language (DSL) for easy graph definition. The syntax is
 
 You can connect multiple components and ports together on one line, and separate connection definitions with a newline or a comma (`,`). 
 
-Components only have to be specified the first time you mention a new process. Afterwards, simply append empty parentheses (`()`) after the process name.
+Components only have to be specified the first time you mention a new process. Afterwards, simply use the process name.
 
 Example:
 
 ```fbp
 'somefile.txt' -> SOURCE Read(ReadFile) OUT -> IN Split(SplitStr)
-Split() OUT -> IN Count(Counter) COUNT -> IN Display(Output)
-Read() ERROR -> IN Display()
+Split OUT -> IN Count(Counter) COUNT -> IN Display(Output)
+Read ERROR -> IN Display
 ```
 
 The syntax also supports blank lines and comments. Comments start with the `#` character.
