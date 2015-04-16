@@ -6,8 +6,8 @@ module.exports = ->
     # Generate library from Peg grammar
     peg:
       fbp:
-        grammar: 'grammar/fbp.peg'
-        outputFile: 'lib/fbp.js'
+        src: 'grammar/fbp.peg'
+        dest: 'lib/fbp.js'
 
     # Build the browser Component
     noflo_browser:
