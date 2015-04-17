@@ -303,6 +303,25 @@ describe 'FBP parser', ->
       chai.expect(graphData.inports).to.be.an 'undefined'
       chai.expect(graphData.outports).to.be.an 'undefined'
 
+  describe 'with FBP string containing node x/y metadata', ->
+    fbpData = """
+    Read(ReadFile) OUT -> IN Display(Output:foo=bar,x=17,y=42)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    it 'should contain nodes with numerical x/y metadata', ->
+      chai.expect(graphData.processes).to.eql
+        Read:
+          component: 'ReadFile'
+        Display:
+          component: 'Output'
+          metadata:
+            foo: 'bar'
+            x: 17
+            y: 42
+
   describe 'with an invalid FBP string', ->
     fbpData = """
     'foo' -> Display(Output)
