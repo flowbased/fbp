@@ -17,7 +17,7 @@
     "grunt-mocha-phantomjs": "0.6.2",
     "grunt-noflo-browser": "0.1.11",
     "grunt-peg": "1.5.0",
-    "mocha": "1.21.5"
+    "mocha": "2.3.3"
   },
   "keywords": [],
   "scripts": {
