@@ -145,7 +145,7 @@ rightlet
   / port:portWithIndex _ proc:node  { return {"tgt":{process:proc, port:port.port, index: port.index}} }
 
 node
-  = node:[a-zA-Z0-9_]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
+  = node:[a-zA-Z0-9_\-]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
 
 component
   = "(" comp:([a-zA-Z/\-0-9_]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }

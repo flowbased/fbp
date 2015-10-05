@@ -398,6 +398,26 @@ describe 'FBP parser', ->
             process: 'Foo_Node_42'
             port: 'in_2'
 
+  describe 'with dashes and numbers in nodes, and components', ->
+    fbpData = "'Hello 09' -> IN_2 Foo-Node-42(Component-15)"
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain one node', ->
+        chai.expect(graphData.processes).to.eql
+          'Foo-Node-42':
+            component: 'Component-15'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(graphData.connections[0]).to.eql
+          data: 'Hello 09'
+          tgt:
+            process: 'Foo-Node-42'
+            port: 'in_2'
+
   describe 'with FBP string containing port indexes', ->
     fbpData = """
     Read(ReadFile) OUT[1] -> IN Display(Output:foo=bar)
