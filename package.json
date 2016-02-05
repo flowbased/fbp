@@ -14,7 +14,7 @@
     "grunt-component-build": "^0.5.3",
     "grunt-contrib-coffee": "^0.11.1",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-mocha-phantomjs": "^0.6.2",
+    "grunt-mocha-phantomjs": "^3.0.0",
     "grunt-noflo-browser": "^0.1.11",
     "grunt-peg": "^1.5.0",
     "mocha": "^2.3.3"
