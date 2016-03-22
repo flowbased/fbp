@@ -21,6 +21,11 @@ describe 'FBP parser', ->
       it 'should contain an IIP', ->
         chai.expect(graphData.connections).to.be.an 'array'
         chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(graphData.connections[0]).to.eql
+          data: 'somefile'
+          tgt: 
+            process: 'Read'
+            port: 'SOURCE'
 
   describe 'with three-statement FBP string', ->
     fbpData = """
@@ -220,27 +225,27 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0]).to.eql
           src:
             process: 'Read'
-            port: 'out'
+            port: 'OUT'
           tgt:
             process: 'Display'
-            port: 'in'
+            port: 'IN'
       it 'should contain two inports', ->
         chai.expect(graphData.inports).to.be.an 'object'
-        chai.expect(graphData.inports.filename).to.eql
+        chai.expect(graphData.inports.FILENAME).to.eql
           process: 'Read'
-          port: 'in'
-        chai.expect(graphData.inports.options).to.eql
+          port: 'IN'
+        chai.expect(graphData.inports.OPTIONS).to.eql
           process: 'Display'
-          port: 'options'
+          port: 'OPTIONS'
       it 'should contain an outport', ->
         chai.expect(graphData.outports).to.be.an 'object'
-        chai.expect(graphData.outports.out).to.eql
+        chai.expect(graphData.outports.OUT).to.eql
           process: 'Display'
-          port: 'out'
+          port: 'OUT'
 
   describe 'with FBP string with legacy EXPORTs', ->
     fbpData = """
-    EXPORT=READ.IN:FILENAME
+    EXPORT=Read.IN:FILENAME
     Read(ReadFile) OUT -> IN Display(Output) 
     """
     graphData = null
@@ -260,16 +265,16 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0]).to.eql
           src:
             process: 'Read'
-            port: 'out'
+            port: 'OUT'
           tgt:
             process: 'Display'
-            port: 'in'
+            port: 'IN'
       it 'should contain an export', ->
         chai.expect(graphData.exports).to.be.an 'array'
         chai.expect(graphData.exports.length).to.equal 1
         chai.expect(graphData.exports[0]).to.eql
-          private: 'read.in'
-          public: 'filename'
+          private: 'Read.IN'
+          public: 'FILENAME'
 
   describe 'with FBP string containing node metadata', ->
     fbpData = """
@@ -362,19 +367,19 @@ describe 'FBP parser', ->
             data: 'Hello'
             tgt:
               process: 'Foo'
-              port: 'in'
+              port: 'IN'
           ,
             data: 'World'
             tgt:
               process: 'Bar'
-              port: 'in'
+              port: 'IN'
           ,
             src:
               process: 'Foo'
-              port: 'out'
+              port: 'OUT'
             tgt:
               process: 'Bar'
-              port: 'data'
+              port: 'DATA'
 
         ]
 
@@ -396,7 +401,7 @@ describe 'FBP parser', ->
           data: 'Hello 09'
           tgt:
             process: 'Foo_Node_42'
-            port: 'in_2'
+            port: 'IN_2'
 
   describe 'with dashes and numbers in nodes, and components', ->
     fbpData = "'Hello 09' -> IN_2 Foo-Node-42(Component-15)"
@@ -416,7 +421,7 @@ describe 'FBP parser', ->
           data: 'Hello 09'
           tgt:
             process: 'Foo-Node-42'
-            port: 'in_2'
+            port: 'IN_2'
 
   describe 'with FBP string containing port indexes', ->
     fbpData = """
@@ -447,21 +452,55 @@ describe 'FBP parser', ->
       chai.expect(graphData.connections).to.eql [
         src:
           process: 'Read'
-          port: 'out'
+          port: 'OUT'
           index: 1
         tgt:
           process: 'Display'
-          port: 'in'
+          port: 'IN'
       ,
         src:
           process: 'Display'
-          port: 'out'
+          port: 'OUT'
         tgt:
           process: 'Drop'
-          port: 'in'
+          port: 'IN'
           index: 0
       ]
     it 'should contain no exports', ->
       chai.expect(graphData.exports).to.be.an 'undefined'
       chai.expect(graphData.inports).to.be.an 'undefined'
       chai.expect(graphData.outports).to.be.an 'undefined'
+
+  describe 'with case-sensitive FBP string', ->
+    fbpData = "'Hello' -> in Foo(Component), 'World' -> inPut Bar(OtherComponent), Foo outPut -> data Bar"
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain two nodes', ->
+        chai.expect(graphData.processes).to.eql
+          Foo:
+            component: 'Component'
+          Bar:
+            component: 'OtherComponent'
+      it 'should contain two IIPs and one edge', ->
+        chai.expect(graphData.connections).to.eql [
+            data: 'Hello'
+            tgt:
+              process: 'Foo'
+              port: 'in'
+          ,
+            data: 'World'
+            tgt:
+              process: 'Bar'
+              port: 'inPut'
+          ,
+            src:
+              process: 'Foo'
+              port: 'outPut'
+            tgt:
+              process: 'Bar'
+              port: 'data'
+
+        ]
