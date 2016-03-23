@@ -141,7 +141,10 @@ destination
   / bridge
 
 bridge
-  = x:port _ proc:node _ y:port     { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
+  = x:port _ proc:node _ y:port           { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
+  / x:portWithIndex _ proc:node _ y:port  { return [{"tgt":{process:proc, port:x.port, index:x.index}},{"src":{process:proc, port:y}}]; }
+  / x:port _ proc:node _ y:portWithIndex  { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y.port, index:y.index}}]; }
+  / x:portWithIndex _ proc:node _ y:portWithIndex  { return [{"tgt":{process:proc, port:x.port, index:x.index}},{"src":{process:proc, port:y.port, index:y.index}}]; }
 
 outport
   = proc:node _ port:port  { return {"src":{process:proc, port:port}} }  
