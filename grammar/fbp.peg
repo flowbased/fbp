@@ -114,9 +114,9 @@ start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:([a-zA-Z_][a-zA-Z.0-9_]+) ":" pub:([a-zA-Z_][a-zA-Z0-9_]+) _ LineTerminator? {return parser.registerExports(makeName(priv),makeName(pub))}
-  / _ "INPORT=" node:([a-zA-Z_][a-zA-Z0-9_]+) "." port:([a-zA-Z_][a-zA-Z0-9_]+) ":" pub:([a-zA-Z_][a-zA-Z0-9_]+) _ LineTerminator? {return parser.registerInports(makeName(node),makeName(port),makeName(pub))}
-  / _ "OUTPORT=" node:([a-zA-Z_][a-zA-Z0-9_]+) "." port:([a-zA-Z_][a-zA-Z0-9_]+) ":" pub:([a-zA-Z_][a-zA-Z0-9_]+) _ LineTerminator? {return parser.registerOutports(makeName(node),makeName(port),makeName(pub))}
+  = _ "EXPORT=" priv:basePort ":" pub:basePort _ LineTerminator? {return parser.registerExports(priv,pub)}
+  / _ "INPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerInports(node,port,pub)}
+  / _ "OUTPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -155,19 +155,22 @@ inport
   / port:portWithIndex _ proc:node  { return {"tgt":{process:proc, port:port.port, index: port.index}} }
 
 node
-  = node:([a-zA-Z_][a-zA-Z0-9_\-]+) comp:component? { if(comp){parser.addNode(makeName(node),comp);}; return makeName(node)}
+  = node:([a-zA-Z_][a-zA-Z0-9_\-]*) comp:component? { if(comp){parser.addNode(makeName(node),comp);}; return makeName(node)}
 
 component
-  = "(" comp:([a-zA-Z/\-0-9_]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
+  = "(" comp:([a-zA-Z/\-0-9_]*)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
 compMeta 
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
 port
-  = portname:([a-zA-Z_][a-zA-Z.0-9_]+) __ {return makeName(portname)}
+  = portname:basePort __ {return portname}
 
 portWithIndex
-  = portname:([a-zA-Z_][a-zA-Z.0-9_]+) "[" portindex:[0-9]+ "]"  __ {return { port: makeName(portname), index: parseInt(portindex.join('')) }}
+  = portname:basePort "[" portindex:[0-9]+ "]"  __ {return { port: portname, index: parseInt(portindex.join('')) }}
+
+basePort
+  = portname:([a-zA-Z_][a-zA-Z.0-9_]*) {return makeName(portname)}
 
 anychar
   = [^\n\r\u2028\u2029]
