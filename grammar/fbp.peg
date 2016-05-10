@@ -67,19 +67,37 @@
     if (!parser.exports) {
       parser.exports = [];
     }
-    parser.exports.push({private:priv, public:pub})
+
+    if (!options.caseSensitive) {
+      priv = priv.toLowerCase();
+      pub = pub.toLowerCase();
+    }
+
+    parser.exports.push({private:priv, public:pub});
   }
   parser.registerInports = function (node, port, pub) {
     if (!parser.inports) {
       parser.inports = {};
     }
-    parser.inports[pub] = {process:node, port:port}
+
+    if (!options.caseSensitive) {
+      pub = pub.toLowerCase();
+      port = port.toLowerCase();
+    }
+
+    parser.inports[pub] = {process:node, port:port};
   }
   parser.registerOutports = function (node, port, pub) {
     if (!parser.outports) {
       parser.outports = {};
     }
-    parser.outports[pub] = {process:node, port:port}
+
+    if (!options.caseSensitive) {
+      pub = pub.toLowerCase();
+      port = port.toLowerCase();
+    }
+
+    parser.outports[pub] = {process:node, port:port};
   }
 
   parser.registerEdges = function (edges) {
@@ -167,10 +185,10 @@ compMeta
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
 port
-  = portname:basePort __ {return portname}
+  = portname:basePort __ {return options.caseSensitive ? portname : portname.toLowerCase()}
 
 portWithIndex
-  = portname:basePort "[" portindex:[0-9]+ "]"  __ {return { port: portname, index: parseInt(portindex.join('')) }}
+  = portname:basePort "[" portindex:[0-9]+ "]"  __ {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: parseInt(portindex.join('')) }}
 
 basePort
   = portname:([a-zA-Z_][a-zA-Z.0-9_]*) {return makeName(portname)}
