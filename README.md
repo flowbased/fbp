@@ -19,6 +19,18 @@ var graphDefinition = parser.parse(fbpData);
 
 After this the graph definition can be loaded into a compatible flow-based runtime environment like NoFlo.
 
+By default ports are expected to be case insensitive. To enable case sensitive port names, pass a caseSensitive option to the parser like so:
+
+```javascript
+var parser = require('fbp');
+
+// Some FBP syntax code
+var fbpData = "'hello, world!' -> inPut Display(Output)";
+
+// Parse into a Graph definition JSON object
+var graphDefinition = parser.parse(fbpData, {casesensitive: true});
+```
+
 ### Command-line
 
 The *fbp* package also provides a command-line tool for converting FBP files into JSON:
