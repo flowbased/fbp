@@ -14,21 +14,19 @@ var parser = require('fbp');
 var fbpData = "'hello, world!' -> IN Display(Output)";
 
 // Parse into a Graph definition JSON object
-var graphDefinition = parser.parse(fbpData);
+var graphDefinition = parser.parse(fbpData, {caseSensitive: true});
 ```
 
-After this the graph definition can be loaded into a compatible flow-based runtime environment like NoFlo.
-
-By default ports are expected to be case insensitive. To enable case sensitive port names, pass a caseSensitive option to the parser like so:
+By default the parser converts port names to lowercase, but this behavior is deprecated. To get the deprecated behavior, specify {caseSensitive: false} or leave out the options object all together like so:
 
 ```javascript
 var parser = require('fbp');
 
 // Some FBP syntax code
-var fbpData = "'hello, world!' -> inPut Display(Output)";
+var fbpData = "'hello, world!' -> IN Display(Output)";
 
 // Parse into a Graph definition JSON object
-var graphDefinition = parser.parse(fbpData, {casesensitive: true});
+var graphDefinition = parser.parse(fbpData);
 ```
 
 ### Command-line
