@@ -33,7 +33,7 @@ var graphDefinition = parser.parse(fbpData);
 
 The *fbp* package also provides a command-line tool for converting FBP files into JSON:
 
-    $ fbp somefile.fbp > somefile.json
+    $ fbp somefile.fbp [--case-sensitive] > somefile.json
 
 ## Language for Flow-Based Programming
 
