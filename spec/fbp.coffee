@@ -13,6 +13,7 @@ describe 'FBP parser', ->
     it 'should produce a graph JSON object', ->
       graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData).to.be.an 'object'
+      chai.expect(graphData.caseSensitive).to.equal true
     describe 'the generated graph', ->
       it 'should contain one node', ->
         chai.expect(graphData.processes).to.eql
@@ -510,7 +511,6 @@ describe 'FBP parser', ->
     INPORT=Read.IN:FILENAME
     INPORT=Display.OPTIONS:OPTIONS
     OUTPORT=Display.OUT:OUT
-    EXPORT=Display.OUT:OUT_EXPORT
     Read(ReadFile) OUT -> IN Display(Output)
 
     ReadIndexed(ReadFile) OUT[1] -> IN DisplayIndexed(Output:foo=bar)
@@ -518,9 +518,12 @@ describe 'FBP parser', ->
     """
     graphData = null
 
-    it 'should produce a graph JSON object', ->
+    beforeEach ->
       graphData = parser.parse fbpData
+
+    it 'should produce a graph JSON object', ->
       chai.expect(graphData).to.be.an 'object'
+      chai.expect(graphData.caseSensitive).to.equal undefined
 
     it 'should contain connections', ->
       chai.expect(graphData.connections).to.be.an 'array'
@@ -566,9 +569,14 @@ describe 'FBP parser', ->
         port: 'out'
 
     it 'should contain an export', ->
+      fbpData = """
+      EXPORT=Read.IN:FILENAME
+      Read(ReadFile) OUT -> IN Display(Output)
+      """
+      graphData = parser.parse fbpData
       chai.expect(graphData.exports).to.be.an 'array'
       chai.expect(graphData.exports.length).to.equal 1
       chai.expect(graphData.exports[0]).to.eql
-        process: 'Display'
-        port: 'out'
+        private: 'read.in'
+        public: 'filename'
 

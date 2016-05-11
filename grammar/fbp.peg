@@ -42,7 +42,7 @@
   }
 
   parser.getResult = function () {
-    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports, inports: parser.inports, outports: parser.outports};
+    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports, inports: parser.inports, outports: parser.outports, caseSensitive: options.caseSensitive};
   }  
 
   var flatten = function (array, isShallow) {
