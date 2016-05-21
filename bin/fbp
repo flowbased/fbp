@@ -4,10 +4,15 @@ var path = require('path');
 var fs = require('fs');
 var parser = require('../lib/fbp');
 
-if (process.argv.length != 3) {
-  console.log("Usage:\n$ fbp somefile.fbp");
+var caseFlag = '--case-sensitive',
+    caseSensitive = false;
+
+if (process.argv.length < 3 || process.argv.length > 4 || (process.argv[4] && process.argv[4] !== caseFlag)) {
+  console.log("Usage:\n$ fbp somefile.fbp [" + caseFlag + "]");
   process.exit(0);
 }
+
+caseSensitive = process.argv[3] === caseFlag;
 
 var file = path.resolve(process.cwd(), process.argv[2]);
 if (!fs.existsSync(file)) {
@@ -15,5 +20,5 @@ if (!fs.existsSync(file)) {
   process.exit(1);
 }
 
-var result = parser.parse(fs.readFileSync(file, 'utf-8'));
+var result = parser.parse(fs.readFileSync(file, 'utf-8'), {caseSensitive: caseSensitive});
 console.log(JSON.stringify(result, null, 2));
