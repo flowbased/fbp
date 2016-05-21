@@ -17,17 +17,8 @@ var fbpData = "'hello, world!' -> IN Display(Output)";
 var graphDefinition = parser.parse(fbpData, {caseSensitive: true});
 ```
 
-By default the parser converts port names to lowercase, but this behavior is deprecated. To get the deprecated behavior, specify {caseSensitive: false} or leave out the options object all together like so:
+When `caseSensitive` is `false` the parser will convert port names to lowercase. This is currently the default behavior, but in future releases the default will change to preserve case. It is therefore recommended that you always specify the `caseSensitive` option to make your code future-proof.
 
-```javascript
-var parser = require('fbp');
-
-// Some FBP syntax code
-var fbpData = "'hello, world!' -> IN Display(Output)";
-
-// Parse into a Graph definition JSON object
-var graphDefinition = parser.parse(fbpData);
-```
 
 ### Command-line
 
