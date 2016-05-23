@@ -16,7 +16,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-phantomjs": "^3.0.0",
     "grunt-noflo-browser": "^0.1.11",
-    "grunt-peg": "^1.5.0",
+    "grunt-peg": "^2.0.1",
     "mocha": "^2.4.4"
   },
   "keywords": [],
