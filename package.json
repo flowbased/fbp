@@ -10,11 +10,11 @@
   "devDependencies": {
     "chai": "^3.3.0",
     "grunt": "^0.4.5",
-    "grunt-cafe-mocha": "^0.1.13",
     "grunt-component-build": "^0.5.3",
     "grunt-contrib-coffee": "^1.0.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-phantomjs": "^3.0.0",
+    "grunt-mocha-test": "^0.12.7",
     "grunt-noflo-browser": "^0.1.11",
     "grunt-peg": "^2.0.1",
     "mocha": "^2.4.4"
