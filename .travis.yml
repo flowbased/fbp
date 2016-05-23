@@ -6,9 +6,9 @@ before_script:
 - npm install -g grunt-cli
 deploy:
   provider: npm
-  email: henri.bergius@iki.fi
+  email: jononor@gmail.com
   api_key:
-    secure: Qr4sJzMCbHV0Y/ZMHLZnt7OIk5azmNLwi0q/wYr0NqXHz6GJuG/5GzydJIdkasH0iQ9Zqk2MywFwbn4qqMF0HLvofB1GS4KNFmoRLOGhDT+v3xCd5arSGFy/luYpo5O1t4krv68PfmuqUVFYUPoZJrhqECW8pBkipKedZ2VCp8k=
+    secure: "oWSPUNVPpIWZMZ6DGXScx5AaiUHSso5nz/Kk0xTciMJlGsS57XSjFKUfdsqqQ7Wsw+W2oZchYgI+EYWEUX4nG9PnJIhmN0m7sGJlPxmTyQf07H0q+x6Z0/l6PE81AaUhrUX1ESGfooGhnj+g+TbELiI8LCALPAqJWgoPJ6ufYnk="
   on:
     tags: true
     repo: flowbased/fbp
