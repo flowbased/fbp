@@ -10,6 +10,11 @@
     <script src="../browser/fbp.js"></script>
     <script src="http://chaijs.com/chai.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
+    <script>
+      if (window.initMochaPhantomJS) {
+        window.initMochaPhantomJS();
+      }
+    </script>
     <script>mocha.setup('bdd');</script>
     <script src="./fbp.js"></script>
     <script>

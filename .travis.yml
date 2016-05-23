@@ -1,14 +1,14 @@
 language: node_js
 sudo: false
 node_js:
-- '0.10'
+- '4.2'
 before_script:
 - npm install -g grunt-cli
 deploy:
   provider: npm
-  email: henri.bergius@iki.fi
+  email: jononor@gmail.com
   api_key:
-    secure: Qr4sJzMCbHV0Y/ZMHLZnt7OIk5azmNLwi0q/wYr0NqXHz6GJuG/5GzydJIdkasH0iQ9Zqk2MywFwbn4qqMF0HLvofB1GS4KNFmoRLOGhDT+v3xCd5arSGFy/luYpo5O1t4krv68PfmuqUVFYUPoZJrhqECW8pBkipKedZ2VCp8k=
+    secure: "f8HCo++sboU3FUuYLmKC3tCIH9WEyJbjItCFDXCAOaBTuwWJYxtp+ehOxPsewX78SwO9LHXIH/O8bUqQgd/kiQA6umcbNQ1OI636NaQQXDNKP4Mdy+hSghwwtrc2iMs2JkcdWg681f8JBQt8L3jopXM29e+aQ1NPtZByiEgmrLM="
   on:
     tags: true
     repo: flowbased/fbp

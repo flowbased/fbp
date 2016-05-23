@@ -21,7 +21,7 @@ module.exports = ->
       tasks: ['test']
 
     # BDD tests on Node.js
-    cafemocha:
+    mochaTest:
       nodejs:
         src: ['spec/*.coffee']
         options:
@@ -47,11 +47,11 @@ module.exports = ->
   @loadNpmTasks 'grunt-noflo-browser'
 
   # Grunt plugins used for testing
-  @loadNpmTasks 'grunt-cafe-mocha'
+  @loadNpmTasks 'grunt-mocha-test'
   @loadNpmTasks 'grunt-contrib-coffee'
   @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-contrib-watch'
 
   @registerTask 'build', ['peg', 'noflo_browser']
-  @registerTask 'test', ['build', 'coffee', 'cafemocha', 'mocha_phantomjs']
+  @registerTask 'test', ['build', 'coffee', 'mochaTest', 'mocha_phantomjs']
   @registerTask 'default', ['build']
