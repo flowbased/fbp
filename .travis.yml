@@ -8,7 +8,7 @@ deploy:
   provider: npm
   email: jononor@gmail.com
   api_key:
-    secure: "oWSPUNVPpIWZMZ6DGXScx5AaiUHSso5nz/Kk0xTciMJlGsS57XSjFKUfdsqqQ7Wsw+W2oZchYgI+EYWEUX4nG9PnJIhmN0m7sGJlPxmTyQf07H0q+x6Z0/l6PE81AaUhrUX1ESGfooGhnj+g+TbELiI8LCALPAqJWgoPJ6ufYnk="
+    secure: "f8HCo++sboU3FUuYLmKC3tCIH9WEyJbjItCFDXCAOaBTuwWJYxtp+ehOxPsewX78SwO9LHXIH/O8bUqQgd/kiQA6umcbNQ1OI636NaQQXDNKP4Mdy+hSghwwtrc2iMs2JkcdWg681f8JBQt8L3jopXM29e+aQ1NPtZByiEgmrLM="
   on:
     tags: true
     repo: flowbased/fbp
