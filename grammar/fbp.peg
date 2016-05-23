@@ -42,7 +42,7 @@
   }
 
   parser.getResult = function () {
-    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports, inports: parser.inports, outports: parser.outports};
+    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports, inports: parser.inports, outports: parser.outports, caseSensitive: options.caseSensitive};
   }  
 
   var flatten = function (array, isShallow) {
@@ -67,19 +67,37 @@
     if (!parser.exports) {
       parser.exports = [];
     }
-    parser.exports.push({private:priv.toLowerCase(), public:pub.toLowerCase()})
+
+    if (!options.caseSensitive) {
+      priv = priv.toLowerCase();
+      pub = pub.toLowerCase();
+    }
+
+    parser.exports.push({private:priv, public:pub});
   }
   parser.registerInports = function (node, port, pub) {
     if (!parser.inports) {
       parser.inports = {};
     }
-    parser.inports[pub.toLowerCase()] = {process:node, port:port.toLowerCase()}
+
+    if (!options.caseSensitive) {
+      pub = pub.toLowerCase();
+      port = port.toLowerCase();
+    }
+
+    parser.inports[pub] = {process:node, port:port};
   }
   parser.registerOutports = function (node, port, pub) {
     if (!parser.outports) {
       parser.outports = {};
     }
-    parser.outports[pub.toLowerCase()] = {process:node, port:port.toLowerCase()}
+
+    if (!options.caseSensitive) {
+      pub = pub.toLowerCase();
+      port = port.toLowerCase();
+    }
+
+    parser.outports[pub] = {process:node, port:port};
   }
 
   parser.registerEdges = function (edges) {
@@ -104,15 +122,19 @@
     });
     return grouped;
   }
+
+  function makeName(s) {
+    return s[0] + s[1].join("");
+  }
 }
 
 start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:[A-Za-z.0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerExports(priv.join(""),pub.join(""))}
-  / _ "INPORT=" node:[A-Za-z0-9_]+ "." port:[A-Z0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerInports(node.join(""),port.join(""),pub.join(""))}
-  / _ "OUTPORT=" node:[A-Za-z0-9_]+ "." port:[A-Z0-9_]+ ":" pub:[A-Z0-9_]+ _ LineTerminator? {return parser.registerOutports(node.join(""),port.join(""),pub.join(""))}
+  = _ "EXPORT=" priv:basePort ":" pub:basePort _ LineTerminator? {return parser.registerExports(priv,pub)}
+  / _ "INPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerInports(node,port,pub)}
+  / _ "OUTPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -124,41 +146,52 @@ comment
   = _ "#" (anychar)*
 
 connection 
-  = x:bridge _ "->" _ y:connection { return [x,y]; }
+  = x:source _ "->" _ y:connection { return [x,y]; }
+  / destination
+
+source
+  = outport
+  / iip
+  / bridge
+
+destination
+  = inport
   / bridge
 
 bridge
-  = x:port _ proc:node _ y:port     { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
-  / iip
-  / rightlet
-  / leftlet
+  = x:port _ proc:node _ y:port           { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
+  / x:portWithIndex _ proc:node _ y:port  { return [{"tgt":{process:proc, port:x.port, index:x.index}},{"src":{process:proc, port:y}}]; }
+  / x:port _ proc:node _ y:portWithIndex  { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y.port, index:y.index}}]; }
+  / x:portWithIndex _ proc:node _ y:portWithIndex  { return [{"tgt":{process:proc, port:x.port, index:x.index}},{"src":{process:proc, port:y.port, index:y.index}}]; }
 
-leftlet
+outport
   = proc:node _ port:port  { return {"src":{process:proc, port:port}} }  
   / proc:node _ port:portWithIndex  { return {"src":{process:proc, port:port.port, index: port.index}} }
 
 iip
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
 
-rightlet 
+inport 
   = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
   / port:portWithIndex _ proc:node  { return {"tgt":{process:proc, port:port.port, index: port.index}} }
 
 node
-  = node:[a-zA-Z0-9_\-]+ comp:component? { if(comp){parser.addNode(node.join(""),comp);}; return node.join("")}
+  = node:([a-zA-Z_][a-zA-Z0-9_\-]*) comp:component? { if(comp){parser.addNode(makeName(node),comp);}; return makeName(node)}
 
 component
-  = "(" comp:([a-zA-Z/\-0-9_]+)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
+  = "(" comp:([a-zA-Z/\-0-9_]*)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
 compMeta 
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
-
 port
-  = portname:[A-Z.0-9_]+ __ {return portname.join("").toLowerCase()}
+  = portname:basePort __ {return options.caseSensitive ? portname : portname.toLowerCase()}
 
 portWithIndex
-  = portname:[A-Z.0-9_]+ "[" portindex:[0-9]+ "]"  __ {return { port: portname.join("").toLowerCase(), index: parseInt(portindex.join('')) }}
+  = portname:basePort "[" portindex:[0-9]+ "]"  __ {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: parseInt(portindex.join('')) }}
+
+basePort
+  = portname:([a-zA-Z_][a-zA-Z.0-9_]*) {return makeName(portname)}
 
 anychar
   = [^\n\r\u2028\u2029]
