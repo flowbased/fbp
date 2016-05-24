@@ -1,7 +1,9 @@
 FBP flow definition language parser [![Build Status](https://travis-ci.org/flowbased/fbp.png?branch=master)](https://travis-ci.org/flowbased/fbp) [![Build status](https://ci.appveyor.com/api/projects/status/cye5ylmhfybnb8t9)](https://ci.appveyor.com/project/bergie/fbp)
 ===================================
 
-The *fbp* library provides a parser for the [FBP domain-specific language](http://noflojs.org/documentation/fbp/) used for defining graphs for flowbased programming environments like [NoFlo](http://noflojs.org).  For more, see [the documentation on the NoFlo site](http://noflojs.org/documentation/fbp/).
+The *fbp* library provides a parser for a domain-specific language for flow-based-programming (FBP),
+used for defining graphs for FBP programming environments like
+[NoFlo](https://noflojs.org), [MicroFlo](https://microflo.org) and [MsgFlo](http://msgflo.org).
 
 ## Usage
 
