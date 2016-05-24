@@ -34,7 +34,7 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should produce a graph JSON object', ->
-      graphData = parser.parse fbpData, caseSensitive:true
+      graphData = parser.parse fbpData, caseSensitive:true, validateSchema:true
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain two nodes', ->
