@@ -23,7 +23,7 @@
         "undefined"
       ],
       "description": "Exported inports of the graph",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "patternProperties": {
         "[a-z0-9]+": {
           "type": "object",
@@ -48,7 +48,7 @@
         "undefined"
       ],
       "description": "Exported outports of the graph",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "patternProperties": {
         "[a-z0-9]+": {
           "type": "object",
