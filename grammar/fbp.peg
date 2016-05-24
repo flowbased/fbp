@@ -132,17 +132,25 @@ start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:basePort ":" pub:basePort _ LineTerminator? {return parser.registerExports(priv,pub)}
-  / _ "INPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerInports(node,port,pub)}
-  / _ "OUTPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerOutports(node,port,pub)}
+  = _ legacyExport
+  / _ exportedInport
+  / _ exportedOutport
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
 
+legacyExport "export"
+  = "EXPORT=" priv:basePort ":" pub:basePort _ LineTerminator? {return parser.registerExports(priv,pub)}
+
+exportedInport "exported inport"
+  = "INPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerInports(node,port,pub)}
+exportedOutport "exported outport"
+  = "OUTPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerOutports(node,port,pub)}
+
 LineTerminator
   = _ ","? comment? [\n\r\u2028\u2029]?
 
-comment
+comment "comment"
   = _ "#" (anychar)*
 
 connection 
@@ -168,29 +176,29 @@ outport
   = proc:node _ port:port  { return {"src":{process:proc, port:port}} }  
   / proc:node _ port:portWithIndex  { return {"src":{process:proc, port:port.port, index: port.index}} }
 
-iip
+iip "IIP"
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
 
 inport 
   = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
   / port:portWithIndex _ proc:node  { return {"tgt":{process:proc, port:port.port, index: port.index}} }
 
-node
+node  "node"
   = node:([a-zA-Z_][a-zA-Z0-9_\-]*) comp:component? { if(comp){parser.addNode(makeName(node),comp);}; return makeName(node)}
 
-component
+component "component instantiation"
   = "(" comp:([a-zA-Z/\-0-9_]*)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
-compMeta 
+compMeta "component metadata"
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
-port
+port "port"
   = portname:basePort __ {return options.caseSensitive ? portname : portname.toLowerCase()}
 
-portWithIndex
+portWithIndex "arrayport"
   = portname:basePort "[" portindex:[0-9]+ "]"  __ {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: parseInt(portindex.join('')) }}
 
-basePort
+basePort "port name"
   = portname:([a-zA-Z_][a-zA-Z.0-9_]*) {return makeName(portname)}
 
 anychar
