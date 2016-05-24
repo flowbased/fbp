@@ -17,7 +17,9 @@ properties:
       name: 
         type: "string"
   inports: 
-    type: "object"
+    type:
+      - object
+      - undefined
     description: "Exported inports of the graph"
     additionalProperties: false
     patternProperties: 
@@ -32,7 +34,9 @@ properties:
             type: "object"
             additionalProperties: true
   outports: 
-    type: "object"
+    type:
+      - object
+      - undefined
     description: "Exported outports of the graph"
     additionalProperties: false
     patternProperties: 
@@ -46,6 +50,11 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+  exports: 
+    type:
+      - array
+      - undefined
+    description: "Deprecated, use inports and outports instead"
   groups: 
     type: "array"
     description: "List of groups of processes"

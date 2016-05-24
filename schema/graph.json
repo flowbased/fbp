@@ -18,7 +18,10 @@
       }
     },
     "inports": {
-      "type": "object",
+      "type": [
+        "object",
+        "undefined"
+      ],
       "description": "Exported inports of the graph",
       "additionalProperties": false,
       "patternProperties": {
@@ -40,7 +43,10 @@
       }
     },
     "outports": {
-      "type": "object",
+      "type": [
+        "object",
+        "undefined"
+      ],
       "description": "Exported outports of the graph",
       "additionalProperties": false,
       "patternProperties": {
@@ -60,6 +66,13 @@
           }
         }
       }
+    },
+    "exports": {
+      "type": [
+        "array",
+        "undefined"
+      ],
+      "description": "Deprecated, use inports and outports instead"
     },
     "groups": {
       "type": "array",
