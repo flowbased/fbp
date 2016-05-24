@@ -1,7 +1,7 @@
 {
   "name": "fbp",
   "description": "Parser for the .fbp flow definition language",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "scripts": [
     "lib/fbp.js"
   ],
