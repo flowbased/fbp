@@ -50,7 +50,9 @@
       outports: parser.outports
     };
 
-    if (options.validateSchema) {
+    var validateSchema = parser.validateSchema; // default
+    if (typeof(options.validateSchema) !== 'undefined') { validateSchema = options.validateSchema; } // explicit option
+    if (validateSchema) {
       if (typeof(tv4) === 'undefined') {
         var tv4 = require("tv4");
       }

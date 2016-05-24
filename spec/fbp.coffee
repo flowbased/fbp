@@ -4,6 +4,8 @@ if typeof process isnt 'undefined' and process.execPath and process.execPath.ind
 else
   parser = require 'fbp'
 
+parser.validateSchema = true # validate schema for every test
+
 describe 'FBP parser', ->
   it 'should provide a parse method', ->
     chai.expect(parser.parse).to.be.a 'function'
@@ -34,7 +36,7 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should produce a graph JSON object', ->
-      graphData = parser.parse fbpData, caseSensitive:true, validateSchema:true
+      graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain two nodes', ->
