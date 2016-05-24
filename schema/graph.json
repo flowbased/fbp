@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "graph.json",
+  "title": "FBP graph",
+  "description": "A graph of FBP processes and connections between them.\nThis is the primary way of specifying FBP programs.\n",
+  "name": "graph",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "properties": {
+      "type": "object",
+      "description": "User-defined properties attached to the graph.",
+      "additionalProperties": true,
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "inports": {
+      "type": [
+        "object",
+        "undefined"
+      ],
+      "description": "Exported inports of the graph",
+      "additionalProperties": true,
+      "patternProperties": {
+        "[a-z0-9]+": {
+          "type": "object",
+          "properties": {
+            "process": {
+              "type": "string"
+            },
+            "port": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "outports": {
+      "type": [
+        "object",
+        "undefined"
+      ],
+      "description": "Exported outports of the graph",
+      "additionalProperties": true,
+      "patternProperties": {
+        "[a-z0-9]+": {
+          "type": "object",
+          "properties": {
+            "process": {
+              "type": "string"
+            },
+            "port": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "exports": {
+      "type": [
+        "array",
+        "undefined"
+      ],
+      "description": "Deprecated, use inports and outports instead"
+    },
+    "groups": {
+      "type": "array",
+      "description": "List of groups of processes",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "nodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "additionalProperties": true
+          }
+        }
+      }
+    },
+    "processes": {
+      "type": "object",
+      "description": "The processes of this graph.\nEach process is an instance of a component.\n",
+      "additionalProperties": false,
+      "patternProperties": {
+        "[a-zA-Z0-9_]+": {
+          "type": "object",
+          "properties": {
+            "component": {
+              "type": "string"
+            },
+            "metadata": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "connections": {
+      "type": "array",
+      "description": "Connections of the graph.\nA connection either connects ports of two processes, or specifices an IIP as initial input packet to a port.\n",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "src": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "process": {
+                "type": "string"
+              },
+              "port": {
+                "type": "string"
+              },
+              "index": {
+                "type": "integer"
+              }
+            }
+          },
+          "tgt": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "process": {
+                "type": "string"
+              },
+              "port": {
+                "type": "string"
+              },
+              "index": {
+                "type": "integer"
+              }
+            }
+          },
+          "data": {},
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  }
+}

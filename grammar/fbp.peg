@@ -42,7 +42,28 @@
   }
 
   parser.getResult = function () {
-    return {processes:nodes, connections:parser.processEdges(), exports:parser.exports, inports: parser.inports, outports: parser.outports, caseSensitive: options.caseSensitive};
+    var result = {
+      processes: nodes,
+      connections: parser.processEdges(),
+      exports: parser.exports,
+      inports: parser.inports,
+      outports: parser.outports
+    };
+
+    var validateSchema = parser.validateSchema; // default
+    if (typeof(options.validateSchema) !== 'undefined') { validateSchema = options.validateSchema; } // explicit option
+    if (validateSchema) {
+      if (typeof(tv4) === 'undefined') {
+        var tv4 = require("tv4");
+      }
+      var schema = require("../schema/graph.json");
+      var validation = tv4.validateMultiple(result, schema);
+      if (!validation.valid) {
+        throw new Error("fbp: Did not validate againt graph schema:\n" + JSON.stringify(validation.errors, null, 2));
+      }
+    }
+    result.caseSensitive = options.caseSensitive;
+    return result;
   }  
 
   var flatten = function (array, isShallow) {
