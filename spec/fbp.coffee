@@ -1,10 +1,10 @@
 if typeof process isnt 'undefined' and process.execPath and process.execPath.indexOf('node') isnt -1
   chai = require 'chai' unless chai
   parser = require '../lib/fbp'
+  parser.validateSchema = true # validate schema for every test on node.js. Don't have tv4 in the browser build
 else
   parser = require 'fbp'
 
-parser.validateSchema = true # validate schema for every test
 
 describe 'FBP parser', ->
   it 'should provide a parse method', ->
