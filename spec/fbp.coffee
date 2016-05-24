@@ -51,6 +51,15 @@ describe 'FBP parser', ->
         chai.expect(graphData.inports).to.be.an 'undefined'
         chai.expect(graphData.outports).to.be.an 'undefined'
 
+  describe 'with three-statement FBP string without instantiation', ->
+    it 'should not fail', ->
+      fbpData = """
+      'db' -> KEY SetDb(Set)
+      SplitDb(Split) OUT -> VALUE SetDb CONTEXT -> IN MergeContext(Merge)
+      """
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData.connections).to.have.length 3
+
   describe 'with a more complex FBP string', ->
     fbpData = """
     '8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)
