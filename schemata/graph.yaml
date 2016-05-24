@@ -21,7 +21,7 @@ properties:
     description: "Exported inports of the graph"
     additionalProperties: false
     patternProperties: 
-      [a-z0-9]+: 
+      "[a-z0-9]+": 
         type: "object"
         properties: 
           process: 
@@ -36,7 +36,7 @@ properties:
     description: "Exported outports of the graph"
     additionalProperties: false
     patternProperties: 
-      [a-z0-9]+: 
+      "[a-z0-9]+": 
         type: "object"
         properties: 
           process: 
@@ -68,7 +68,7 @@ properties:
       Each process is an instance of a component.
     additionalProperties: false
     patternProperties: 
-      [a-zA-Z0-9_]+: 
+      "[a-zA-Z0-9_]+": 
         type: "object"
         properties: 
           component: 
