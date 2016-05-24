@@ -9,6 +9,15 @@ module.exports = ->
         src: 'grammar/fbp.peg'
         dest: 'lib/fbp.js'
 
+    yaml:
+      schemas:
+        files: [
+          expand: true
+          cwd: 'schemata/'
+          src: '*.yaml'
+          dest: 'schema/'
+        ]
+
     # Build the browser Component
     noflo_browser:
       build:
@@ -43,6 +52,7 @@ module.exports = ->
       all: ['spec/runner.html']
 
   # Grunt plugins used for building
+  @loadNpmTasks 'grunt-yaml'
   @loadNpmTasks 'grunt-peg'
   @loadNpmTasks 'grunt-noflo-browser'
 
@@ -52,6 +62,6 @@ module.exports = ->
   @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-contrib-watch'
 
-  @registerTask 'build', ['peg', 'noflo_browser']
+  @registerTask 'build', ['peg', 'yaml', 'noflo_browser']
   @registerTask 'test', ['build', 'coffee', 'mochaTest', 'mocha_phantomjs']
   @registerTask 'default', ['build']
