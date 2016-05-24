@@ -34,7 +34,7 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should produce a graph JSON object', ->
-      graphData = parser.parse fbpData
+      graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData).to.be.an 'object'
     describe 'the generated graph', ->
       it 'should contain two nodes', ->
@@ -57,7 +57,7 @@ describe 'FBP parser', ->
       'db' -> KEY SetDb(Set)
       SplitDb(Split) OUT -> VALUE SetDb CONTEXT -> IN MergeContext(Merge)
       """
-      graphData = parser.parse fbpData
+      graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData.connections).to.have.length 3
 
   describe 'with a more complex FBP string', ->

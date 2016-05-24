@@ -150,9 +150,9 @@ connection
   / destination
 
 source
-  = outport
+  = bridge
+  / outport
   / iip
-  / bridge
 
 destination
   = inport
