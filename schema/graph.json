@@ -131,6 +131,9 @@
               },
               "port": {
                 "type": "string"
+              },
+              "index": {
+                "type": "integer"
               }
             }
           },
@@ -143,6 +146,9 @@
               },
               "port": {
                 "type": "string"
+              },
+              "index": {
+                "type": "integer"
               }
             }
           },
