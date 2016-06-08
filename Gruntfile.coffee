@@ -49,6 +49,10 @@ module.exports = ->
 
     # BDD tests on browser
     mocha_phantomjs:
+      options:
+        output: 'spec/result.xml'
+        reporter: 'spec'
+        failWithOutput: true
       all: ['spec/runner.html']
 
   # Grunt plugins used for building
