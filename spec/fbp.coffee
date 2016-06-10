@@ -26,7 +26,7 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections.length).to.equal 1
         chai.expect(graphData.connections[0]).to.eql
           data: 'somefile'
-          tgt: 
+          tgt:
             process: 'Read'
             port: 'SOURCE'
 
@@ -136,6 +136,28 @@ describe 'FBP parser', ->
         chai.expect(graphData.inports).to.be.an 'undefined'
         chai.expect(graphData.outports).to.be.an 'undefined'
 
+  describe 'with FBP string containing a JSON IIP string', ->
+    fbpData = """
+    { "string": "s", "number": 123, "array": [1,2,3], "object": {}} -> IN Display(Output)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain a node', ->
+        chai.expect(graphData.processes).to.eql
+          Display:
+            component: 'Output'
+      it 'should contain an IIP', ->
+        chai.expect(graphData.connections).to.be.an 'array'
+        chai.expect(graphData.connections.length).to.equal 1
+        chai.expect(graphData.connections[0].data).to.deep.equal { "string": "s", "number": 123, "array": [1,2,3], "object": {}}
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.be.an 'undefined'
+        chai.expect(graphData.outports).to.be.an 'undefined'
+
   describe 'with FBP string containing comments', ->
     fbpData = """
     # Do stuff
@@ -216,7 +238,7 @@ describe 'FBP parser', ->
     INPORT=Read.IN:FILENAME
     INPORT=Display.OPTIONS:OPTIONS
     OUTPORT=Display.OUT:OUT
-    Read(ReadFile) OUT -> IN Display(Output) 
+    Read(ReadFile) OUT -> IN Display(Output)
     """
     graphData = null
     it 'should produce a graph JSON object', ->
@@ -258,7 +280,7 @@ describe 'FBP parser', ->
   describe 'with FBP string with legacy EXPORTs', ->
     fbpData = """
     EXPORT=Read.IN:FILENAME
-    Read(ReadFile) OUT -> IN Display(Output) 
+    Read(ReadFile) OUT -> IN Display(Output)
     """
     graphData = null
     it 'should produce a graph JSON object', ->
@@ -291,7 +313,7 @@ describe 'FBP parser', ->
   describe 'with FBP string containing node metadata', ->
     fbpData = """
     Read(ReadFile) OUT -> IN Display(Output:foo=bar)
-    
+
     # And we drop the rest
     Display OUT -> IN Drop(Drop:foo=baz,baz=/foo/bar)
     """
@@ -438,7 +460,7 @@ describe 'FBP parser', ->
   describe 'with FBP string containing port indexes', ->
     fbpData = """
     Read(ReadFile) OUT[1] -> IN Display(Output:foo=bar)
-    
+
     # And we drop the rest
     Display OUT -> IN[0] Drop(Drop:foo=baz,baz=/foo/bar)
     """
@@ -590,4 +612,3 @@ describe 'FBP parser', ->
       chai.expect(graphData.exports[0]).to.eql
         private: 'read.in'
         public: 'filename'
-
