@@ -62,6 +62,14 @@ describe 'FBP parser', ->
       graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData.connections).to.have.length 3
 
+  describe 'with no spaces around arrows', ->
+    it 'should not fail', ->
+      fbpData = """
+      a(A)->b(B) ->c(C)-> d(D)->e
+      """
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData.connections).to.have.length 4
+
   describe 'with anonymous nodes in an FBP string', ->
     fbpData = """
     (A) OUT -> IN (B) OUT -> IN (B)
