@@ -136,10 +136,11 @@
   }
 
   parser.registerEdges = function (edges) {
-
-    edges.forEach(function (o, i) {
-      parser.edges.push(o);
-    });
+    if (Array.isArray(edges)) {
+      edges.forEach(function (o, i) {
+        parser.edges.push(o);
+      });
+    }
   }
 
   parser.processEdges = function () {
