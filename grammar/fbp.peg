@@ -160,12 +160,19 @@
     return s[0] + s[1].join("");
   }
 
-  function makePort(process, port, index) {
-    var p = { process: process, port: port };
-    if (index != null) {
-        p.index = index;
+  function makePort(process, port, defaultPort) {
+    var p = { process: process, port: port ? port.port : defaultPort };
+    if (port && port.index != null) {
+        p.index = port.index;
     }
     return p;
+}
+
+  function makeInPort(process, port) {
+      return makePort(process, port, "IN");
+  }
+  function makeOutPort(process, port) {
+      return makePort(process, port, "OUT");
   }
 }
 
@@ -200,17 +207,17 @@ destination
   / bridge
 
 bridge
-  = x:port _ proc:node _ y:port  { return [{"tgt":makePort(proc, x.port, x.index)},{"src":makePort(proc, y.port, y.index)}]; }
+  = x:port _ proc:node _ y:port  { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; }
 
 outport
-  = proc:node _ port:port  { return {"src":makePort(proc, port.port, port.index)} }
+  = proc:node _ port:port  { return {"src":makeOutPort(proc, port)} }
 
 iip
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
   / iip:JSON_text  { return {"data":iip} }
 
 inport
-  = port:port _ proc:node  { return {"tgt":makePort(proc, port.port, port.index)} }
+  = port:port _ proc:node  { return {"tgt":makeInPort(proc, port)} }
 
 node
   = name:nodeNameAndComponent { return name}
