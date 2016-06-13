@@ -6,6 +6,8 @@
 {
   var parser, edges, nodes;
 
+  var defaultInPort = "IN", defaultOutPort = "OUT";
+
   parser = this;
   delete parser.exports;
   delete parser.inports;
@@ -161,7 +163,13 @@
   }
 
   function makePort(process, port, defaultPort) {
-    var p = { process: process, port: port ? port.port : defaultPort };
+    if (!options.caseSensitive) {
+      defaultPort = defaultPort.toLowerCase()
+    }
+    var p = {
+        process: process,
+        port: port ? port.port : defaultPort
+    };
     if (port && port.index != null) {
         p.index = port.index;
     }
@@ -169,10 +177,10 @@
 }
 
   function makeInPort(process, port) {
-      return makePort(process, port, "IN");
+      return makePort(process, port, defaultInPort);
   }
   function makeOutPort(process, port) {
-      return makePort(process, port, "OUT");
+      return makePort(process, port, defaultOutPort);
   }
 }
 
@@ -183,6 +191,8 @@ line
   = _ "EXPORT=" priv:portName ":" pub:portName _ LineTerminator? {return parser.registerExports(priv,pub)}
   / _ "INPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerInports(node,port,pub)}
   / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
+  / _ "DEFAULT_INPORT=" name:portName _ LineTerminator? { defaultInPort = name}
+  / _ "DEFAULT_OUTPORT=" name:portName _ LineTerminator? { defaultOutPort = name}
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -211,12 +221,10 @@ bridge
   / x:(port__)? proc:nodeWithComponent y:(__port)?  { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; }
 
 outport
-  = proc:node port:__port { return {"src":makeOutPort(proc, port)} }
-  / proc:nodeWithComponent port:(__port)? { return {"src":makeOutPort(proc, port)} }
+  = proc:node port:(__port)? { return {"src":makeOutPort(proc, port)} }
 
 inport
-  = port:port__ proc:node  { return {"tgt":makeInPort(proc, port)} }
-  / port:(port__)? proc:nodeWithComponent  { return {"tgt":makeInPort(proc, port)} }
+  = port:(port__)? proc:node  { return {"tgt":makeInPort(proc, port)} }
 
 iip
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
