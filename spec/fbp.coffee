@@ -62,6 +62,33 @@ describe 'FBP parser', ->
       graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData.connections).to.have.length 3
 
+  describe 'with anonymous nodes in an FBP string', ->
+    fbpData = """
+    (A) OUT -> IN (B) OUT -> IN (B)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should contain three nodes with unique names', ->
+        chai.expect(graphData.processes).to.eql
+          _A_1:
+            component: 'A'
+          _B_1:
+            component: 'B'
+          _B_2:
+            component: 'B'
+      it 'should contain two edges', ->
+        chai.expect(graphData.connections).to.eql [
+          { src: { process: '_A_1', port: 'OUT' }, tgt: { process: '_B_1', port: 'IN' } }
+          { src: { process: '_B_1', port: 'OUT' }, tgt: { process: '_B_2', port: 'IN' } }
+        ]
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.be.an 'undefined'
+        chai.expect(graphData.outports).to.be.an 'undefined'
+
   describe 'with a more complex FBP string', ->
     fbpData = """
     '8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)

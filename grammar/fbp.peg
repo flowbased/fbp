@@ -41,6 +41,18 @@
 
   }
 
+  var anonymousIndexes = {};
+  var anonymousNodeNames = {};
+  parser.addAnonymousNode = function(comp, offset) {
+      if (!anonymousNodeNames[offset]) {
+          var componentName = comp.comp.replace(/[^a-zA-Z0-9]+/, "_");
+          anonymousIndexes[componentName] = (anonymousIndexes[componentName] || 0) + 1;
+          anonymousNodeNames[offset] = "_" + componentName + "_" + anonymousIndexes[componentName];
+          this.addNode(anonymousNodeNames[offset], comp);
+      }
+      return anonymousNodeNames[offset];
+  }
+
   parser.getResult = function () {
     var result = {
       processes: nodes,
@@ -201,7 +213,18 @@ inport
   = port:port _ proc:node  { return {"tgt":makePort(proc, port.port, port.index)} }
 
 node
-  = node:([a-zA-Z_][a-zA-Z0-9_\-]*) comp:component? { if(comp){parser.addNode(makeName(node),comp);}; return makeName(node)}
+  = name:nodeNameAndComponent { return name}
+  / name:nodeName { return name}
+  / name:nodeComponent { return name}
+
+nodeName
+  = name:([a-zA-Z_][a-zA-Z0-9_\-]*) { return makeName(name)}
+
+nodeNameAndComponent
+  = name:nodeName comp:component { parser.addNode(name,comp); return name}
+
+nodeComponent
+  = comp:component { return parser.addAnonymousNode(comp, location().start.offset) }
 
 component
   = "(" comp:([a-zA-Z/\-0-9_]*)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
