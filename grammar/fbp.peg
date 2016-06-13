@@ -4,7 +4,7 @@
  */
 
 {
-  var parser, edges, nodes; 
+  var parser, edges, nodes;
 
   parser = this;
   delete parser.exports;
@@ -38,7 +38,7 @@
       }
       nodes[nodeName].metadata=metadata;
     }
-   
+
   }
 
   parser.getResult = function () {
@@ -64,7 +64,7 @@
     }
     result.caseSensitive = options.caseSensitive;
     return result;
-  }  
+  }
 
   var flatten = function (array, isShallow) {
     var index = -1,
@@ -83,7 +83,7 @@
     }
     return result;
   }
-  
+
   parser.registerExports = function (priv, pub) {
     if (!parser.exports) {
       parser.exports = [];
@@ -126,15 +126,15 @@
     edges.forEach(function (o, i) {
       parser.edges.push(o);
     });
-  }  
+  }
 
-  parser.processEdges = function () {   
+  parser.processEdges = function () {
     var flats, grouped;
     flats = flatten(parser.edges);
     grouped = [];
     var current = {};
     flats.forEach(function (o, i) {
-      if (i % 2 !== 0) { 
+      if (i % 2 !== 0) {
         var pair = grouped[grouped.length - 1];
         pair.tgt = o.tgt;
         return;
@@ -147,15 +147,23 @@
   function makeName(s) {
     return s[0] + s[1].join("");
   }
+
+  function makePort(process, port, index) {
+    var p = { process: process, port: port };
+    if (index != null) {
+        p.index = index;
+    }
+    return p;
+  }
 }
 
 start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:basePort ":" pub:basePort _ LineTerminator? {return parser.registerExports(priv,pub)}
-  / _ "INPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerInports(node,port,pub)}
-  / _ "OUTPORT=" node:node "." port:basePort ":" pub:basePort _ LineTerminator? {return parser.registerOutports(node,port,pub)}
+  = _ "EXPORT=" priv:portName ":" pub:portName _ LineTerminator? {return parser.registerExports(priv,pub)}
+  / _ "INPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerInports(node,port,pub)}
+  / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -166,7 +174,7 @@ LineTerminator
 comment
   = _ "#" (anychar)*
 
-connection 
+connection
   = x:source _ "->" _ y:connection { return [x,y]; }
   / destination
 
@@ -180,22 +188,17 @@ destination
   / bridge
 
 bridge
-  = x:port _ proc:node _ y:port           { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y}}]; }
-  / x:portWithIndex _ proc:node _ y:port  { return [{"tgt":{process:proc, port:x.port, index:x.index}},{"src":{process:proc, port:y}}]; }
-  / x:port _ proc:node _ y:portWithIndex  { return [{"tgt":{process:proc, port:x}},{"src":{process:proc, port:y.port, index:y.index}}]; }
-  / x:portWithIndex _ proc:node _ y:portWithIndex  { return [{"tgt":{process:proc, port:x.port, index:x.index}},{"src":{process:proc, port:y.port, index:y.index}}]; }
+  = x:port _ proc:node _ y:port  { return [{"tgt":makePort(proc, x.port, x.index)},{"src":makePort(proc, y.port, y.index)}]; }
 
 outport
-  = proc:node _ port:port  { return {"src":{process:proc, port:port}} }  
-  / proc:node _ port:portWithIndex  { return {"src":{process:proc, port:port.port, index: port.index}} }
+  = proc:node _ port:port  { return {"src":makePort(proc, port.port, port.index)} }
 
 iip
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
   / iip:JSON_text  { return {"data":iip} }
 
-inport 
-  = port:port _ proc:node  { return {"tgt":{process:proc, port:port}} } 
-  / port:portWithIndex _ proc:node  { return {"tgt":{process:proc, port:port.port, index: port.index}} }
+inport
+  = port:port _ proc:node  { return {"tgt":makePort(proc, port.port, port.index)} }
 
 node
   = node:([a-zA-Z_][a-zA-Z0-9_\-]*) comp:component? { if(comp){parser.addNode(makeName(node),comp);}; return makeName(node)}
@@ -203,16 +206,16 @@ node
 component
   = "(" comp:([a-zA-Z/\-0-9_]*)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
-compMeta 
+compMeta
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
+portIndex
+  = "[" portindex:[0-9]+ "]" {return parseInt(portindex.join(''))}
+
 port
-  = portname:basePort __ {return options.caseSensitive ? portname : portname.toLowerCase()}
+  = portname:portName portindex:(portIndex)?  __ {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }}
 
-portWithIndex
-  = portname:basePort "[" portindex:[0-9]+ "]"  __ {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: parseInt(portindex.join('')) }}
-
-basePort
+portName
   = portname:([a-zA-Z_][a-zA-Z.0-9_]*) {return makeName(portname)}
 
 anychar
