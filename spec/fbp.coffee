@@ -89,6 +89,61 @@ describe 'FBP parser', ->
         chai.expect(graphData.inports).to.be.an 'undefined'
         chai.expect(graphData.outports).to.be.an 'undefined'
 
+  describe 'with default inport', ->
+    fbpData = """
+    (A) OUT -> (B)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should default port name to "IN"', ->
+        chai.expect(graphData.connections).to.eql [
+          { src: { process: '_A_1', port: 'OUT' }, tgt: { process: '_B_1', port: 'IN' } }
+        ]
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.be.an 'undefined'
+        chai.expect(graphData.outports).to.be.an 'undefined'
+
+  describe 'with default outport', ->
+    fbpData = """
+    (A) -> IN (B)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should default port name to "OUT"', ->
+        chai.expect(graphData.connections).to.eql [
+          { src: { process: '_A_1', port: 'OUT' }, tgt: { process: '_B_1', port: 'IN' } }
+        ]
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.be.an 'undefined'
+        chai.expect(graphData.outports).to.be.an 'undefined'
+
+  describe 'with default ports', ->
+    fbpData = """
+    (A) -> (B) -> (C)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+    describe 'the generated graph', ->
+      it 'should correctly use default ports', ->
+        chai.expect(graphData.connections).to.eql [
+          { src: { process: '_A_1', port: 'OUT' }, tgt: { process: '_B_1', port: 'IN' } }
+          { src: { process: '_B_1', port: 'OUT' }, tgt: { process: '_C_1', port: 'IN' } }
+        ]
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.be.an 'undefined'
+        chai.expect(graphData.outports).to.be.an 'undefined'
+
   describe 'with a more complex FBP string', ->
     fbpData = """
     '8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)
@@ -390,7 +445,7 @@ describe 'FBP parser', ->
 
   describe 'with an invalid FBP string', ->
     fbpData = """
-    'foo' -> Display(Output)
+    'foo' --> Display(Output)
     """
     it 'should fail with an Exception', ->
       chai.expect(-> parser.parse fbpData, caseSensitive:true).to.throw Error

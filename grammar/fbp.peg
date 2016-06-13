@@ -145,14 +145,14 @@
     flats = flatten(parser.edges);
     grouped = [];
     var current = {};
-    flats.forEach(function (o, i) {
-      if (i % 2 !== 0) {
-        var pair = grouped[grouped.length - 1];
-        pair.tgt = o.tgt;
-        return;
-      }
-      grouped.push(o);
-    });
+    for (var i = 1; i < flats.length; i += 1) {
+        // skip over default ports at the beginning of lines (could also handle this in grammar)
+        if (("src" in flats[i - 1] || "data" in flats[i - 1]) && "tgt" in flats[i]) {
+            flats[i - 1].tgt = flats[i].tgt;
+            grouped.push(flats[i - 1]);
+            i++;
+        }
+    }
     return grouped;
   }
 
@@ -207,17 +207,20 @@ destination
   / bridge
 
 bridge
-  = x:port _ proc:node _ y:port  { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; }
+  = x:port__ proc:node y:__port  { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; }
+  / x:(port__)? proc:nodeWithComponent y:(__port)?  { return [{"tgt":makeInPort(proc, x)},{"src":makeOutPort(proc, y)}]; }
 
 outport
-  = proc:node _ port:port  { return {"src":makeOutPort(proc, port)} }
+  = proc:node port:__port { return {"src":makeOutPort(proc, port)} }
+  / proc:nodeWithComponent port:(__port)? { return {"src":makeOutPort(proc, port)} }
+
+inport
+  = port:port__ proc:node  { return {"tgt":makeInPort(proc, port)} }
+  / port:(port__)? proc:nodeWithComponent  { return {"tgt":makeInPort(proc, port)} }
 
 iip
   = "'" iip:(iipchar)* "'"        { return {"data":iip.join("")} }
   / iip:JSON_text  { return {"data":iip} }
-
-inport
-  = port:port _ proc:node  { return {"tgt":makeInPort(proc, port)} }
 
 node
   = name:nodeNameAndComponent { return name}
@@ -233,20 +236,30 @@ nodeNameAndComponent
 nodeComponent
   = comp:component { return parser.addAnonymousNode(comp, location().start.offset) }
 
+nodeWithComponent
+  = nodeNameAndComponent
+  / nodeComponent
+
 component
   = "(" comp:([a-zA-Z/\-0-9_]*)? meta:compMeta? ")" { var o = {}; comp ? o.comp = comp.join("") : o.comp = ''; meta ? o.meta = meta.join("").split(',') : null; return o; }
 
 compMeta
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
-portIndex
-  = "[" portindex:[0-9]+ "]" {return parseInt(portindex.join(''))}
-
 port
-  = portname:portName portindex:(portIndex)?  __ {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }}
+  = portname:portName portindex:(portIndex)? {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }}
+
+port__
+  = port:port __ { return port; }
+
+__port
+  = __ port:port { return port; }
 
 portName
   = portname:([a-zA-Z_][a-zA-Z.0-9_]*) {return makeName(portname)}
+
+portIndex
+  = "[" portindex:[0-9]+ "]" {return parseInt(portindex.join(''))}
 
 anychar
   = [^\n\r\u2028\u2029]
