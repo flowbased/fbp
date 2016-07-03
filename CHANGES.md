@@ -1,3 +1,6 @@
+# fbp 1.5.0 - released 02.07.2016
+
+* Add JSON to FBP parser
 
 # fbp 1.4.0 - released 17.06.2016
 
