@@ -5,7 +5,6 @@ if typeof process isnt 'undefined' and process.execPath and process.execPath.ind
 else
   parser = require 'fbp'
 
-
 describe 'FBP parser', ->
   it 'should provide a parse method', ->
     chai.expect(parser.parse).to.be.a 'function'

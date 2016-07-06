@@ -20,5 +20,10 @@ if (!fs.existsSync(file)) {
   process.exit(1);
 }
 
+fileType = file.split('.').pop()
+if(fileType == 'json'){
+  return console.log(parser.serialize(fs.readFileSync(file, 'utf-8')));
+}
+
 var result = parser.parse(fs.readFileSync(file, 'utf-8'), {caseSensitive: caseSensitive});
 console.log(JSON.stringify(result, null, 2));
