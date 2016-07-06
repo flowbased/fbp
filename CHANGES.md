@@ -1,7 +1,7 @@
-# fbp 1.5.0 - TODO
+# fbp 1.5.0 - released 06.07.2016
 
-* Add JSON to FBP serializer
-* Put JSON as serialize in grammar fbp.peg
+* Add API for serializating back to FBP DSL: `fbp.serialize(graph)`
+* Let `fbp somegraph.json` serialize back to FBP DSL
 
 # fbp 1.4.0 - released 17.06.2016
 
