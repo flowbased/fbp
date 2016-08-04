@@ -23,7 +23,7 @@
     "grunt-noflo-browser": "^0.1.11",
     "grunt-peg": "^2.0.1",
     "grunt-yaml": "^0.4.2",
-    "mocha": "^2.5.3",
+    "mocha": "^3.0.1",
     "tv4": "^1.2.7"
   },
   "keywords": [],
