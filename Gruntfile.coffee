@@ -22,7 +22,17 @@ module.exports = ->
     noflo_browser:
       build:
         files:
-          'browser/fbp.js': ['component.json']
+          'browser/fbp.js': ['browser/entry.js']
+        options:
+          webpack:
+            module:
+              loaders: [
+                test: /\.json$/
+                loader: 'json-loader'
+              ]
+              resolve:
+                extensions:
+                  ['', '.js']
 
     # Automated recompilation and testing when developing
     watch:
@@ -50,7 +60,6 @@ module.exports = ->
     # BDD tests on browser
     mocha_phantomjs:
       options:
-        output: 'spec/result.xml'
         reporter: 'spec'
         failWithOutput: true
       all: ['spec/runner.html']
