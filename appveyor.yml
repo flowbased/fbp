@@ -6,10 +6,10 @@ init:
 
 environment:
   matrix:
-    - nodejs_version: 0.10
+    - nodejs_version: 4.2
 
 install:
-  - ps: Update-NodeJsInstallation (Get-NodeJsLatestBuild $env:nodejs_version)
+  - ps: Install-Product node $env:nodejs_version
   - npm install -g grunt-cli
   - npm install
   - npm build
@@ -19,5 +19,4 @@ build: off
 test_script:
   - node --version
   - npm --version
-  - ps: grunt test --no-color # PowerShell
   - cmd: grunt test --no-color
