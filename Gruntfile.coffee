@@ -24,6 +24,11 @@ module.exports = ->
         files:
           'browser/fbp.js': ['browser/entry.js']
         options:
+          manifest:
+            runtimes: ['noflo']
+            discover: true
+            recursive: true
+            silent: true
           webpack:
             module:
               loaders: [
