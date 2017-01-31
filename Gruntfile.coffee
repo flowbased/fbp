@@ -29,15 +29,6 @@ module.exports = ->
             discover: true
             recursive: true
             silent: true
-          webpack:
-            module:
-              loaders: [
-                test: /\.json$/
-                loader: 'json-loader'
-              ]
-              resolve:
-                extensions:
-                  ['', '.js']
 
     # Automated recompilation and testing when developing
     watch:
