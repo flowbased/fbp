@@ -7,6 +7,10 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "caseSensitive": {
+      "type": "boolean",
+      "description": "Whether the graph port identifiers should be treated as case-sensitive"
+    },
     "properties": {
       "type": "object",
       "description": "User-defined properties attached to the graph.",
