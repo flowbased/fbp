@@ -53,6 +53,13 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            properties:
+              x:
+                type: integer
+                description: "X coordinate of a graph inport"
+              y:
+                type: integer
+                description: "Y coordinate of a graph inport"
   outports: 
     type:
       - object
@@ -70,6 +77,13 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            properties:
+              x:
+                type: integer
+                description: "X coordinate of a graph outport"
+              y:
+                type: integer
+                description: "Y coordinate of a graph outport"
   exports: 
     type:
       - array
@@ -88,8 +102,12 @@ properties:
           type: "array"
           items: 
             type: "string"
-        metadata: 
+        metadata:
+          type: object
           additionalProperties: true
+          properties:
+            description:
+              type: string
   processes: 
     type: "object"
     description: |
@@ -105,6 +123,13 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            properties:
+              x:
+                type: integer
+                description: "X coordinate of a graph node"
+              y:
+                type: integer
+                description: "Y coordinate of a graph node"
   connections: 
     type: "array"
     description: |
@@ -138,4 +163,7 @@ properties:
         metadata: 
           type: "object"
           additionalProperties: true
-
+          properties:
+            route:
+              type: integer
+              description: "Route identifier of a graph edge"
