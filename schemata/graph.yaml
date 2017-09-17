@@ -9,6 +9,9 @@ name: "graph"
 type: "object"
 additionalProperties: false
 properties: 
+  caseSensitive:
+    type: "boolean"
+    description: "Whether the graph port identifiers should be treated as case-sensitive"
   properties: 
     type: "object"
     description: "User-defined properties attached to the graph."
@@ -16,6 +19,26 @@ properties:
     properties: 
       name: 
         type: "string"
+        description: "Name of the graph"
+      environment:
+        type: "object"
+        description: "Information about the execution environment for the graph"
+        additionalProperties: true
+        required: ['type']
+        properties:
+          type:
+            type: "string"
+            description: "Runtime type the graph is for"
+            example: "noflo-nodejs"
+          content:
+            type: "string"
+            description: "HTML fixture for browser-based graphs"
+      description:
+        type: "string"
+        description: "Graph description"
+      icon:
+        type: "string"
+        description: "Name of the icon that can be used for depicting the graph"
   inports: 
     type:
       - object
@@ -33,6 +56,14 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            required: []
+            properties:
+              x:
+                type: integer
+                description: "X coordinate of a graph inport"
+              y:
+                type: integer
+                description: "Y coordinate of a graph inport"
   outports: 
     type:
       - object
@@ -49,7 +80,15 @@ properties:
             type: "string"
           metadata: 
             type: "object"
+            required: []
             additionalProperties: true
+            properties:
+              x:
+                type: integer
+                description: "X coordinate of a graph outport"
+              y:
+                type: integer
+                description: "Y coordinate of a graph outport"
   exports: 
     type:
       - array
@@ -68,8 +107,13 @@ properties:
           type: "array"
           items: 
             type: "string"
-        metadata: 
+        metadata:
+          type: object
           additionalProperties: true
+          required: []
+          properties:
+            description:
+              type: string
   processes: 
     type: "object"
     description: |
@@ -85,6 +129,14 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            required: []
+            properties:
+              x:
+                type: integer
+                description: "X coordinate of a graph node"
+              y:
+                type: integer
+                description: "Y coordinate of a graph node"
   connections: 
     type: "array"
     description: |
@@ -118,4 +170,15 @@ properties:
         metadata: 
           type: "object"
           additionalProperties: true
-
+          required: []
+          properties:
+            route:
+              type: integer
+              description: "Route identifier of a graph edge"
+            schema:
+              type: string
+              format: "uri"
+              description: "JSON schema associated with a graph edge"
+            secure:
+              type: boolean
+              description: "Whether edge data should be treated as secure"
