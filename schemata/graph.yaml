@@ -171,3 +171,6 @@ properties:
               type: string
               format: "uri"
               description: "JSON schema associated with a graph edge"
+            secure:
+              type: boolean
+              description: "Whether edge data should be treated as secure"
