@@ -45,7 +45,7 @@
         },
         "icon": {
           "type": "string",
-          "description": "Icon that can be used for depicting the graph"
+          "description": "Name of the icon that can be used for depicting the graph"
         }
       }
     },
