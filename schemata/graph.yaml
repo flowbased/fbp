@@ -167,3 +167,7 @@ properties:
             route:
               type: integer
               description: "Route identifier of a graph edge"
+            schema:
+              type: string
+              format: "uri"
+              description: "JSON schema associated with a graph edge"
