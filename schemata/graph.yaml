@@ -16,6 +16,26 @@ properties:
     properties: 
       name: 
         type: "string"
+        description: "Name of the graph"
+      environment:
+        type: "object"
+        description: "Information about the execution environment for the graph"
+        additionalProperties: true
+        required: ['type']
+        properties:
+          type:
+            type: "string"
+            description: "Runtime type the graph is for"
+            example: "noflo-nodejs"
+          content:
+            type: "string"
+            description: "HTML fixture for browser-based graphs"
+      description:
+        type: "string"
+        description: "Graph description"
+      icon:
+        type: "string"
+        description: "Icon that can be used for depicting the graph"
   inports: 
     type:
       - object
