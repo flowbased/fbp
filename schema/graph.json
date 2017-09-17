@@ -13,7 +13,35 @@
       "additionalProperties": true,
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the graph"
+        },
+        "environment": {
+          "type": "object",
+          "description": "Information about the execution environment for the graph",
+          "additionalProperties": true,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "Runtime type the graph is for",
+              "example": "noflo-nodejs"
+            },
+            "content": {
+              "type": "string",
+              "description": "HTML fixture for browser-based graphs"
+            }
+          }
+        },
+        "description": {
+          "type": "string",
+          "description": "Graph description"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon that can be used for depicting the graph"
         }
       }
     },
@@ -36,7 +64,17 @@
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": true
+              "additionalProperties": true,
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "description": "X coordinate of a graph inport"
+                },
+                "y": {
+                  "type": "integer",
+                  "description": "Y coordinate of a graph inport"
+                }
+              }
             }
           }
         }
@@ -61,7 +99,17 @@
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": true
+              "additionalProperties": true,
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "description": "X coordinate of a graph outport"
+                },
+                "y": {
+                  "type": "integer",
+                  "description": "Y coordinate of a graph outport"
+                }
+              }
             }
           }
         }
@@ -91,7 +139,13 @@
             }
           },
           "metadata": {
-            "additionalProperties": true
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "description": {
+                "type": "string"
+              }
+            }
           }
         }
       }
@@ -109,7 +163,17 @@
             },
             "metadata": {
               "type": "object",
-              "additionalProperties": true
+              "additionalProperties": true,
+              "properties": {
+                "x": {
+                  "type": "integer",
+                  "description": "X coordinate of a graph node"
+                },
+                "y": {
+                  "type": "integer",
+                  "description": "Y coordinate of a graph node"
+                }
+              }
             }
           }
         }
@@ -155,7 +219,13 @@
           "data": {},
           "metadata": {
             "type": "object",
-            "additionalProperties": true
+            "additionalProperties": true,
+            "properties": {
+              "route": {
+                "type": "integer",
+                "description": "Route identifier of a graph edge"
+              }
+            }
           }
         }
       }
