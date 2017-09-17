@@ -56,6 +56,7 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            required: []
             properties:
               x:
                 type: integer
@@ -79,6 +80,7 @@ properties:
             type: "string"
           metadata: 
             type: "object"
+            required: []
             additionalProperties: true
             properties:
               x:
@@ -108,6 +110,7 @@ properties:
         metadata:
           type: object
           additionalProperties: true
+          required: []
           properties:
             description:
               type: string
@@ -126,6 +129,7 @@ properties:
           metadata: 
             type: "object"
             additionalProperties: true
+            required: []
             properties:
               x:
                 type: integer
@@ -166,6 +170,7 @@ properties:
         metadata: 
           type: "object"
           additionalProperties: true
+          required: []
           properties:
             route:
               type: integer

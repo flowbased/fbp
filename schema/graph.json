@@ -69,6 +69,7 @@
             "metadata": {
               "type": "object",
               "additionalProperties": true,
+              "required": [],
               "properties": {
                 "x": {
                   "type": "integer",
@@ -103,6 +104,7 @@
             },
             "metadata": {
               "type": "object",
+              "required": [],
               "additionalProperties": true,
               "properties": {
                 "x": {
@@ -145,6 +147,7 @@
           "metadata": {
             "type": "object",
             "additionalProperties": true,
+            "required": [],
             "properties": {
               "description": {
                 "type": "string"
@@ -168,6 +171,7 @@
             "metadata": {
               "type": "object",
               "additionalProperties": true,
+              "required": [],
               "properties": {
                 "x": {
                   "type": "integer",
@@ -224,6 +228,7 @@
           "metadata": {
             "type": "object",
             "additionalProperties": true,
+            "required": [],
             "properties": {
               "route": {
                 "type": "integer",
