@@ -20,7 +20,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-mocha-phantomjs": "^4.0.0",
     "grunt-mocha-test": "^0.13.2",
-    "grunt-noflo-browser": "^1.2.0",
+    "grunt-noflo-browser": "^1.4.0",
     "grunt-peg": "^2.0.1",
     "grunt-yaml": "^0.4.2",
     "json-loader": "^0.5.4",
