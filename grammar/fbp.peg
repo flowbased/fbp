@@ -185,18 +185,6 @@
     return result;
   }
 
-  parser.registerExports = function (priv, pub) {
-    if (!parser.exports) {
-      parser.exports = [];
-    }
-
-    if (!options.caseSensitive) {
-      priv = priv.toLowerCase();
-      pub = pub.toLowerCase();
-    }
-
-    parser.exports.push({private:priv, public:pub});
-  }
   parser.registerInports = function (node, port, pub) {
     if (!parser.inports) {
       parser.inports = {};
@@ -276,8 +264,7 @@ start
   = (line)*  { return parser.getResult();  }
 
 line
-  = _ "EXPORT=" priv:portName ":" pub:portName _ LineTerminator? {return parser.registerExports(priv,pub)}
-  / _ "INPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerInports(node,port,pub)}
+  = _ "INPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerInports(node,port,pub)}
   / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / _ "DEFAULT_INPORT=" name:portName _ LineTerminator? { defaultInPort = name}
   / _ "DEFAULT_OUTPORT=" name:portName _ LineTerminator? { defaultOutPort = name}
