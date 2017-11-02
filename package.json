@@ -15,6 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.0.2",
+    "coveralls": "^3.0.0",
     "grunt": "^1.0.1",
     "grunt-contrib-coffee": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
