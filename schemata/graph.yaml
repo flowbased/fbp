@@ -89,11 +89,6 @@ properties:
               y:
                 type: integer
                 description: "Y coordinate of a graph outport"
-  exports: 
-    type:
-      - array
-      - undefined
-    description: "Deprecated, use inports and outports instead"
   groups: 
     type: "array"
     description: "List of groups of processes"

@@ -146,7 +146,6 @@
     var result = {
       processes: nodes,
       connections: parser.processEdges(),
-      exports: parser.exports,
       inports: parser.inports,
       outports: parser.outports
     };
