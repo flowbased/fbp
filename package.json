@@ -15,6 +15,7 @@
   "license": "MIT",
   "devDependencies": {
     "chai": "^4.0.2",
+    "coveralls": "^3.0.0",
     "grunt": "^1.0.1",
     "grunt-contrib-coffee": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
@@ -25,14 +26,20 @@
     "grunt-yaml": "^0.4.2",
     "json-loader": "^0.5.4",
     "mocha": "^4.0.0",
+    "nyc": "^11.3.0",
     "tv4": "^1.2.7"
   },
   "keywords": [],
   "scripts": {
-    "test": "grunt test"
+    "test": "nyc grunt test"
   },
   "main": "./lib/fbp",
   "bin": {
     "fbp": "./bin/fbp"
+  },
+  "nyc": {
+    "include": [
+      "lib/*.js"
+    ]
   }
 }
