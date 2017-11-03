@@ -8,9 +8,9 @@ after_success:
 - "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
 deploy:
   provider: npm
-  email: jononor@gmail.com
+  email: henri.bergius@iki.fi
   api_key:
-    secure: "f8HCo++sboU3FUuYLmKC3tCIH9WEyJbjItCFDXCAOaBTuwWJYxtp+ehOxPsewX78SwO9LHXIH/O8bUqQgd/kiQA6umcbNQ1OI636NaQQXDNKP4Mdy+hSghwwtrc2iMs2JkcdWg681f8JBQt8L3jopXM29e+aQ1NPtZByiEgmrLM="
+    secure: xbagpObfeEHfKQPwa4fsGxonZ7mMQNBCrCZkvnK3eCxlQyCnW94t7c8jHAZpghzUkR3Vrf/2ifDwhJ4ZaWUNtGplRbOIZrM+H82xdIdKxXbGRIwWfMaTU0p/ulEQqktyn8yjYwqVvO9d8BJbw+nqJvSbud+vEpq/nqqlKb6FDqo=
   on:
     tags: true
     repo: flowbased/fbp
