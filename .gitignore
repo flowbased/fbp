@@ -3,3 +3,4 @@
 /browser/fbp.js
 /spec/*.js
 /spec/result.xml
+/.nyc_output/
