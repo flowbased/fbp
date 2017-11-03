@@ -1,3 +1,7 @@
+# fbp 1.6.0 - released 03.11.2017
+
+* Removed support for deprecated `EXPORT` keyword
+
 # fbp 1.5.0 - released 06.07.2016
 
 * Add API for serializating back to FBP DSL: `fbp.serialize(graph)`
