@@ -372,32 +372,13 @@ describe 'FBP parser', ->
     Read(ReadFile) OUT -> IN Display(Output)
     """
     graphData = null
-    it 'should produce a graph JSON object', ->
-      graphData = parser.parse fbpData, caseSensitive:true
-      chai.expect(graphData).to.be.an 'object'
-    describe 'the generated graph', ->
-      it 'should contain two nodes', ->
-        chai.expect(graphData.processes).to.eql
-          Read:
-            component: 'ReadFile'
-          Display:
-            component: 'Output'
-      it 'should contain a single connection', ->
-        chai.expect(graphData.connections).to.be.an 'array'
-        chai.expect(graphData.connections.length).to.equal 1
-        chai.expect(graphData.connections[0]).to.eql
-          src:
-            process: 'Read'
-            port: 'OUT'
-          tgt:
-            process: 'Display'
-            port: 'IN'
-      it 'should contain an export', ->
-        chai.expect(graphData.exports).to.be.an 'array'
-        chai.expect(graphData.exports.length).to.equal 1
-        chai.expect(graphData.exports[0]).to.eql
-          private: 'Read.IN'
-          public: 'FILENAME'
+    it 'should fail', ->
+      try
+        graphData = parser.parse fbpData, caseSensitive:true
+      catch e
+        chai.expect(e.message).to.be.a 'string'
+        return
+      throw new Error 'Expected an error'
 
   describe 'with FBP string containing node metadata', ->
     fbpData = """
@@ -689,15 +670,3 @@ describe 'FBP parser', ->
       chai.expect(graphData.outports.out).to.eql
         process: 'Display'
         port: 'out'
-
-    it 'should contain an export', ->
-      fbpData = """
-      EXPORT=Read.IN:FILENAME
-      Read(ReadFile) OUT -> IN Display(Output)
-      """
-      graphData = parser.parse fbpData
-      chai.expect(graphData.exports).to.be.an 'array'
-      chai.expect(graphData.exports.length).to.equal 1
-      chai.expect(graphData.exports[0]).to.eql
-        private: 'read.in'
-        public: 'filename'
