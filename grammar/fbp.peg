@@ -94,6 +94,13 @@
       }
       return name;
     };
+    var hasAnnotations = false;
+    if (input.properties && input.properties.environment && input.properties.environment.type) {
+      output += "# @runtime " + input.properties.environment.type + "\n";
+    }
+    if (input.name) {
+      output += "# @name " + input.name + "\n";
+    }
     ref = input.inports;
     for (name in ref) {
       inPort = ref[name];
