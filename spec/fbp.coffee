@@ -49,8 +49,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections.length).to.equal 2
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with three-statement FBP string without instantiation', ->
     it 'should not fail', ->
@@ -93,8 +93,8 @@ describe 'FBP parser', ->
         ]
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with default inport', ->
     fbpData = """
@@ -111,8 +111,8 @@ describe 'FBP parser', ->
         ]
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with default outport', ->
     fbpData = """
@@ -129,8 +129,8 @@ describe 'FBP parser', ->
         ]
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with default ports', ->
     fbpData = """
@@ -148,8 +148,8 @@ describe 'FBP parser', ->
         ]
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with a more complex FBP string', ->
     fbpData = """
@@ -200,8 +200,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0].data).to.equal 'foo Bar BAZ'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string containing an empty IIP string', ->
     fbpData = """
@@ -222,8 +222,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0].data).to.equal ''
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string containing a JSON IIP string', ->
     fbpData = """
@@ -244,8 +244,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0].data).to.deep.equal { "string": "s", "number": 123, "array": [1,2,3], "object": {}}
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string containing comments', ->
     fbpData = """
@@ -267,8 +267,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0].data).to.equal 'foo bar'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string containing URL as IIP', ->
     fbpData = """
@@ -289,8 +289,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0].data).to.equal 'http://localhost:5984/default'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string containing RegExp as IIP', ->
     fbpData = """
@@ -319,8 +319,8 @@ describe 'FBP parser', ->
         chai.expect(graphData.connections[0].data).to.be.a 'string'
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
-        chai.expect(graphData.inports).to.be.an 'undefined'
-        chai.expect(graphData.outports).to.be.an 'undefined'
+        chai.expect(graphData.inports).to.eql {}
+        chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string with inports and outports', ->
     fbpData = """
@@ -409,8 +409,8 @@ describe 'FBP parser', ->
       chai.expect(graphData.connections.length).to.equal 2
     it 'should contain no exports', ->
       chai.expect(graphData.exports).to.be.an 'undefined'
-      chai.expect(graphData.inports).to.be.an 'undefined'
-      chai.expect(graphData.outports).to.be.an 'undefined'
+      chai.expect(graphData.inports).to.eql {}
+      chai.expect(graphData.outports).to.eql {}
 
   describe 'with FBP string containing node x/y metadata', ->
     fbpData = """
@@ -572,8 +572,8 @@ describe 'FBP parser', ->
       ]
     it 'should contain no exports', ->
       chai.expect(graphData.exports).to.be.an 'undefined'
-      chai.expect(graphData.inports).to.be.an 'undefined'
-      chai.expect(graphData.outports).to.be.an 'undefined'
+      chai.expect(graphData.inports).to.eql {}
+      chai.expect(graphData.outports).to.eql {}
 
   describe 'with case-sensitive FBP string', ->
     fbpData = "'Hello' -> in Foo(Component), 'World' -> inPut Bar(OtherComponent), Foo outPut -> data Bar"
@@ -626,7 +626,7 @@ describe 'FBP parser', ->
 
     it 'should produce a graph JSON object', ->
       chai.expect(graphData).to.be.an 'object'
-      chai.expect(graphData.caseSensitive).to.equal undefined
+      chai.expect(graphData.caseSensitive).to.equal false
 
     it 'should contain connections', ->
       chai.expect(graphData.connections).to.be.an 'array'
