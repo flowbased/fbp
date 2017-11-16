@@ -28,6 +28,24 @@
         }
       });
     }
+    // Ensure all inports point to existing nodes
+    if (graph.inports) {
+      Object.keys(graph.inports).forEach(function (port) {
+        var portDef = graph.inports[port];
+        if (!graph.processes[portDef.process]) {
+          throw new Error('Inport "' + port + '" is connected to an undefined target node');
+        }
+      });
+    }
+    // Ensure all outports point to existing nodes
+    if (graph.outports) {
+      Object.keys(graph.outports).forEach(function (port) {
+        var portDef = graph.outports[port];
+        if (!graph.processes[portDef.process]) {
+          throw new Error('Inport "' + port + '" is connected to an undefined source node');
+        }
+      });
+    }
     // Ensure all edges have nodes defined
     if (graph.connections) {
       graph.connections.forEach(function (edge) {

@@ -710,3 +710,33 @@ describe 'FBP parser', ->
         chai.expect(e.message).to.contain 'connected to an undefined target node'
         return
       throw new Error 'Expected an error'
+  describe 'with FBP string with exported inport pointing to non-existing node', ->
+    fbpData = """
+    INPORT=noexist.IN:broken
+    INPORT=exist.IN:works
+    exist(foo/Bar)
+    """
+    graphData = null
+    it 'should fail', ->
+      try
+        graphData = parser.parse fbpData, caseSensitive:true
+      catch e
+        chai.expect(e).to.be.an 'error'
+        chai.expect(e.message).to.contain 'connected to an undefined target node'
+        return
+      throw new Error 'Expected an error'
+  describe 'with FBP string with exported outport pointing to non-existing node', ->
+    fbpData = """
+    INPORT=exist.IN:works
+    OUTPORT=noexist.OUT:broken
+    exist(foo/Bar)
+    """
+    graphData = null
+    it 'should fail', ->
+      try
+        graphData = parser.parse fbpData, caseSensitive:true
+      catch e
+        chai.expect(e).to.be.an 'error'
+        chai.expect(e.message).to.contain 'connected to an undefined source node'
+        return
+      throw new Error 'Expected an error'
