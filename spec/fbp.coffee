@@ -670,3 +670,43 @@ describe 'FBP parser', ->
       chai.expect(graphData.outports.out).to.eql
         process: 'Display'
         port: 'out'
+
+  describe 'with FBP string with source node that doesn\'t have a component defined', ->
+    fbpData = """
+    instanceMissingComponentName OUT -> (core/Output)
+    """
+    graphData = null
+    it 'should fail', ->
+      try
+        graphData = parser.parse fbpData, caseSensitive:true
+      catch e
+        chai.expect(e).to.be.an 'error'
+        chai.expect(e.message).to.contain 'connected to an undefined source node'
+        return
+      throw new Error 'Expected an error'
+  describe 'with FBP string with IIP sent to node that doesn\'t have a component defined', ->
+    fbpData = """
+    'localhost' -> IN instanceMissingComponentName
+    """
+    graphData = null
+    it 'should fail', ->
+      try
+        graphData = parser.parse fbpData, caseSensitive:true
+      catch e
+        chai.expect(e).to.be.an 'error'
+        chai.expect(e.message).to.contain 'connected to an undefined target node'
+        return
+      throw new Error 'Expected an error'
+  describe 'with FBP string with target node that doesn\'t have a component defined', ->
+    fbpData = """
+    a(A)->b(B) ->c(C)-> d(D)->e
+    """
+    graphData = null
+    it 'should fail', ->
+      try
+        graphData = parser.parse fbpData, caseSensitive:true
+      catch e
+        chai.expect(e).to.be.an 'error'
+        chai.expect(e.message).to.contain 'connected to an undefined target node'
+        return
+      throw new Error 'Expected an error'
