@@ -95,7 +95,6 @@
       }
       return name;
     };
-    var hasAnnotations = false;
     if (input.properties) {
       if (input.properties.environment && input.properties.environment.type) {
         output += "# @runtime " + input.properties.environment.type + "\n";
@@ -108,7 +107,7 @@
         if (typeof propval !== 'string') {
           return;
         }
-        if (!propval.match(/^[a-zA-Z0-9\-_]+$/)) {
+        if (!propval.match(/^[a-zA-Z0-9\-_\s\.]+$/)) {
           return;
         }
         output += "# @" + prop + " " + propval + '\n';
@@ -354,7 +353,7 @@ line
   / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / _ "DEFAULT_INPORT=" name:portName _ LineTerminator? { defaultInPort = name}
   / _ "DEFAULT_OUTPORT=" name:portName _ LineTerminator? { defaultOutPort = name}
-  / annotation:annotation { return parser.registerAnnotation(annotation[0], annotation[1]); }
+  / annotation:annotation [\n\r\u2028\u2029] { return parser.registerAnnotation(annotation[0], annotation[1]); }
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -417,7 +416,7 @@ compMeta
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
 
 annotation
-  = "#" __ "@" key:[a-zA-Z0-9\-_]+ __ value:[a-zA-Z0-9\-_]+ { return [key.join(''), value.join('')]; }
+  = "#" __ "@" key:[a-zA-Z0-9\-_]+ __ value:[a-zA-Z0-9\-_ \.]+ { return [key.join(''), value.join('')]; }
 
 port
   = portname:portName portindex:(portIndex)? {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }}
