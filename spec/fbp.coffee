@@ -64,7 +64,7 @@ describe 'FBP parser', ->
   describe 'with no spaces around arrows', ->
     it 'should not fail', ->
       fbpData = """
-      a(A)->b(B) ->c(C)-> d(D)->e
+      a(A)->b(B) ->c(C)-> d(D)->e(E)
       """
       graphData = parser.parse fbpData, caseSensitive:true
       chai.expect(graphData.connections).to.have.length 4
