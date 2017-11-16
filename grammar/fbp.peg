@@ -95,11 +95,23 @@
       return name;
     };
     var hasAnnotations = false;
-    if (input.properties && input.properties.environment && input.properties.environment.type) {
-      output += "# @runtime " + input.properties.environment.type + "\n";
-    }
-    if (input.name) {
-      output += "# @name " + input.name + "\n";
+    if (input.properties) {
+      if (input.properties.environment && input.properties.environment.type) {
+        output += "# @runtime " + input.properties.environment.type + "\n";
+      }
+      Object.keys(input.properties).forEach(function (prop) {
+        if (!prop.match(/[a-zA-Z0-9]+/)) {
+          return;
+        }
+        var propval = input.properties[prop];
+        if (typeof propval !== 'string') {
+          return;
+        }
+        if (!propval.match(/[a-zA-Z0-9]+/)) {
+          return;
+        }
+        output += "# @" + prop + " " + propval + '\n';
+      });
     }
     ref = input.inports;
     for (name in ref) {
