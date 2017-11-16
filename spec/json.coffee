@@ -277,65 +277,65 @@ describe 'JSON to FBP parser', ->
       fbpData = parser.serialize jsonData
       jsonFromFbp = parser.parse fbpData, caseSensitive:true
 
-describe 'roundtrip with FBP string with inports and outports', ->
-  fbpData = """
-  INPORT=Read.IN:FILENAME
-  INPORT=Display.OPTIONS:OPTIONS
-  OUTPORT=Display.OUT:OUT
-  Read(ReadFile) OUT -> IN Display(Output)
-  """
-  graphData = null
-  graphData2 = null
-  it 'should produce a graph JSON object', ->
-    # $1 fbp -> json
-    graphData = parser.parse fbpData, caseSensitive:true
-    chai.expect(graphData).to.be.an 'object'
+  describe 'roundtrip with FBP string with inports and outports', ->
+    fbpData = """
+    INPORT=Read.IN:FILENAME
+    INPORT=Display.OPTIONS:OPTIONS
+    OUTPORT=Display.OUT:OUT
+    Read(ReadFile) OUT -> IN Display(Output)
+    """
+    graphData = null
+    graphData2 = null
+    it 'should produce a graph JSON object', ->
+      # $1 fbp -> json
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
 
-    # json -> fbp
-    jsonGraph = parser.serialize graphData
+      # json -> fbp
+      jsonGraph = parser.serialize graphData
 
-    # fbp -> json
-    graphData2 = parser.parse jsonGraph, caseSensitive:true
+      # fbp -> json
+      graphData2 = parser.parse jsonGraph, caseSensitive:true
 
-    # $2 json -> fbp
-    fbpData2 = parser.serialize graphData2
+      # $2 json -> fbp
+      fbpData2 = parser.serialize graphData2
 
-    # remove the formatting
-    fbpData = fbpData.replace /(\n)+/g, ""
-    fbpData2 = fbpData2.replace /(\n)+/g, ""
+      # remove the formatting
+      fbpData = fbpData.replace /(\n)+/g, ""
+      fbpData2 = fbpData2.replace /(\n)+/g, ""
 
-    # make sure $1 and $2 match
-    chai.expect(fbpData).to.equal fbpData2
+      # make sure $1 and $2 match
+      chai.expect(fbpData).to.equal fbpData2
 
-  describe 'the generated graph', ->
-    it 'should contain two nodes', ->
-      chai.expect(graphData2.processes).to.eql
-        Read:
-          component: 'ReadFile'
-        Display:
-          component: 'Output'
-    it 'should contain no legacy exports', ->
-      chai.expect(graphData2.exports).to.be.an 'undefined'
-    it 'should contain a single connection', ->
-      chai.expect(graphData2.connections).to.be.an 'array'
-      chai.expect(graphData2.connections.length).to.equal 1
-      chai.expect(graphData2.connections[0]).to.eql
-        src:
+    describe 'the generated graph', ->
+      it 'should contain two nodes', ->
+        chai.expect(graphData2.processes).to.eql
+          Read:
+            component: 'ReadFile'
+          Display:
+            component: 'Output'
+      it 'should contain no legacy exports', ->
+        chai.expect(graphData2.exports).to.be.an 'undefined'
+      it 'should contain a single connection', ->
+        chai.expect(graphData2.connections).to.be.an 'array'
+        chai.expect(graphData2.connections.length).to.equal 1
+        chai.expect(graphData2.connections[0]).to.eql
+          src:
+            process: 'Read'
+            port: 'OUT'
+          tgt:
+            process: 'Display'
+            port: 'IN'
+      it 'should contain two inports', ->
+        chai.expect(graphData2.inports).to.be.an 'object'
+        chai.expect(graphData2.inports.FILENAME).to.eql
           process: 'Read'
-          port: 'OUT'
-        tgt:
-          process: 'Display'
           port: 'IN'
-    it 'should contain two inports', ->
-      chai.expect(graphData2.inports).to.be.an 'object'
-      chai.expect(graphData2.inports.FILENAME).to.eql
-        process: 'Read'
-        port: 'IN'
-      chai.expect(graphData2.inports.OPTIONS).to.eql
-        process: 'Display'
-        port: 'OPTIONS'
-    it 'should contain an outport', ->
-      chai.expect(graphData2.outports).to.be.an 'object'
-      chai.expect(graphData2.outports.OUT).to.eql
-        process: 'Display'
-        port: 'OUT'
+        chai.expect(graphData2.inports.OPTIONS).to.eql
+          process: 'Display'
+          port: 'OPTIONS'
+      it 'should contain an outport', ->
+        chai.expect(graphData2.outports).to.be.an 'object'
+        chai.expect(graphData2.outports.OUT).to.eql
+          process: 'Display'
+          port: 'OUT'
