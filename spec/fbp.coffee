@@ -763,7 +763,7 @@ describe 'FBP parser', ->
       chai.expect(graphData).to.be.an 'object'
       chai.expect(graphData.caseSensitive).to.equal true
     it 'should contain the name', ->
-      chai.expect(graphData.name).to.equal 'ReadSomefile'
+      chai.expect(graphData.properties.name).to.equal 'ReadSomefile'
   describe 'with FBP string containing two annotations', ->
     fbpData = """
     # @runtime foo
@@ -778,4 +778,4 @@ describe 'FBP parser', ->
     it 'should contain the runtime type property', ->
       chai.expect(graphData.properties.environment.type).to.equal 'foo'
     it 'should contain the name', ->
-      chai.expect(graphData.name).to.equal 'ReadSomefile'
+      chai.expect(graphData.properties.name).to.equal 'ReadSomefile'

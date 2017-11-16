@@ -350,8 +350,8 @@ describe 'JSON to FBP parser', ->
     """
     graphData =
       caseSensitive: false
-      name: 'ReadSomefile'
       properties:
+        name: 'ReadSomefile'
         environment:
           type: 'foo'
       inports: {}
