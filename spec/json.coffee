@@ -339,3 +339,34 @@ describe 'JSON to FBP parser', ->
         chai.expect(graphData2.outports.OUT).to.eql
           process: 'Display'
           port: 'OUT'
+
+  describe 'annotations', ->
+    fbpData = """
+# @runtime foo
+# @name ReadSomefile
+"somefile" -> SOURCE Read(ReadFile)
+    """
+    graphData =
+      caseSensitive: false
+      name: 'ReadSomefile'
+      environment:
+        type: 'foo'
+      inports: {}
+      outports: {}
+      groups: []
+      processes:
+        Read:
+          component: 'ReadFile'
+      connections: [
+        data: 'somefile'
+        tgt:
+          process: 'Read'
+          port: 'source'
+      ]
+    it 'should produce expected FBP string', ->
+      serialized = parser.serialize graphData
+      chai.expect(serialized).to.equal fbpData
+    it 'should produce expected FBP graph', ->
+      serialized = parser.parse fbpData
+      console.log graphData
+      chai.expect(serialized).to.eql graphData

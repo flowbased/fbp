@@ -740,3 +740,42 @@ describe 'FBP parser', ->
         chai.expect(e.message).to.contain 'connected to an undefined source node'
         return
       throw new Error 'Expected an error'
+  describe 'with FBP string containing a runtime annotation', ->
+    fbpData = """
+    # @runtime foo
+    'somefile' -> SOURCE Read(ReadFile)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+      chai.expect(graphData.caseSensitive).to.equal true
+    it 'should contain the runtime type property', ->
+      chai.expect(graphData.properties.environment.type).to.equal 'foo'
+  describe 'with FBP string containing a name annotation', ->
+    fbpData = """
+    # @name ReadSomefile
+    'somefile' -> SOURCE Read(ReadFile)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+      chai.expect(graphData.caseSensitive).to.equal true
+    it 'should contain the name', ->
+      chai.expect(graphData.name).to.equal 'ReadSomefile'
+  describe 'with FBP string containing two annotations', ->
+    fbpData = """
+    # @runtime foo
+    # @name ReadSomefile
+    'somefile' -> SOURCE Read(ReadFile)
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
+      chai.expect(graphData.caseSensitive).to.equal true
+    it 'should contain the runtime type property', ->
+      chai.expect(graphData.properties.environment.type).to.equal 'foo'
+    it 'should contain the name', ->
+      chai.expect(graphData.name).to.equal 'ReadSomefile'
