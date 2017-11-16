@@ -117,16 +117,16 @@
     for (name in ref) {
       inPort = ref[name];
       process = getInOutName(name, inPort);
-      name = name.toUpperCase();
-      inPort.port = inPort.port.toUpperCase();
+      name = input.caseSensitive ? name : name.toUpperCase();
+      inPort.port = input.caseSensitive ? inPort.port : inPort.port.toUpperCase();
       output += "INPORT=" + process + "." + inPort.port + ":" + name + "\n";
     }
     ref1 = input.outports;
     for (name in ref1) {
       outPort = ref1[name];
       process = getInOutName(name, inPort);
-      name = name.toUpperCase();
-      outPort.port = outPort.port.toUpperCase();
+      name = input.caseSensitive ? name : name.toUpperCase();
+      outPort.port = input.caseSensitive ? outPort.port : outPort.port.toUpperCase();
       output += "OUTPORT=" + process + "." + outPort.port + ":" + name + "\n";
     }
     output += "\n";
@@ -134,7 +134,7 @@
     for (i = 0, len = ref2.length; i < len; i++) {
       conn = ref2[i];
       if (conn.data != null) {
-        tgtPort = conn.tgt.port.toUpperCase();
+        tgtPort = input.caseSensitive ? conn.tgt.port : conn.tgt.port.toUpperCase();
         tgtName = conn.tgt.process;
         tgtProcess = input.processes[tgtName].component;
         tgt = getName(tgtName);
@@ -144,7 +144,7 @@
         }
         output += '"' + conn.data + '"' + (" -> " + tgtPort + " " + tgt + "\n");
       } else {
-        srcPort = conn.src.port.toUpperCase();
+        srcPort = input.caseSensitive ? conn.src.port : conn.src.port.toUpperCase();
         srcName = conn.src.process;
         srcProcess = input.processes[srcName].component;
         src = getName(srcName);
@@ -152,7 +152,7 @@
           src += "(" + srcProcess + ")";
           namedComponents.push(srcProcess);
         }
-        tgtPort = conn.tgt.port.toUpperCase();
+        tgtPort = input.caseSensitive ? conn.tgt.port : conn.tgt.port.toUpperCase();
         tgtName = conn.tgt.process;
         tgtProcess = input.processes[tgtName].component;
         tgt = getName(tgtName);

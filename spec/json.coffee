@@ -376,3 +376,53 @@ describe 'JSON to FBP parser', ->
     it 'should produce expected FBP graph', ->
       serialized = parser.parse fbpData
       chai.expect(serialized).to.eql graphData
+
+  describe 'annotations in case sensitive graph', ->
+    fbpData = """
+# @runtime foo
+# @name ReadSomefile
+INPORT=Read.Encoding:FileEncoding
+OUTPORT=Read.Out:Result
+
+"somefile" -> SourceCode Read(ReadFile)
+Read Errors -> TryAgain Read
+
+    """
+    graphData =
+      caseSensitive: true
+      properties:
+        name: 'ReadSomefile'
+        environment:
+          type: 'foo'
+      inports:
+        FileEncoding:
+          process: 'Read'
+          port: 'Encoding'
+      outports:
+        Result:
+          process: 'Read'
+          port: 'Out'
+      groups: []
+      processes:
+        Read:
+          component: 'ReadFile'
+      connections: [
+        data: 'somefile'
+        tgt:
+          process: 'Read'
+          port: 'SourceCode'
+      ,
+        src:
+          process: 'Read'
+          port: 'Errors'
+        tgt:
+          process: 'Read'
+          port: 'TryAgain'
+      ]
+    it 'should produce expected FBP string', ->
+      serialized = parser.serialize graphData
+      chai.expect(serialized).to.equal fbpData
+    it 'should produce expected FBP graph', ->
+      serialized = parser.parse fbpData,
+        caseSensitive: true
+      chai.expect(serialized).to.eql graphData
