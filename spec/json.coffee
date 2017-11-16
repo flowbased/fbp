@@ -276,6 +276,7 @@ describe 'JSON to FBP parser', ->
     it 'should produce a graph JSON object', ->
       fbpData = parser.serialize jsonData
       jsonFromFbp = parser.parse fbpData, caseSensitive:true
+      chai.expect(jsonFromFbp.properties).to.eql JSON.parse(jsonData).properties
 
   describe 'roundtrip with FBP string with inports and outports', ->
     fbpData = """
