@@ -9,9 +9,10 @@
   var defaultInPort = "IN", defaultOutPort = "OUT";
 
   parser = this;
-  delete parser.exports;
+  delete parser.properties;
   delete parser.inports;
   delete parser.outports;
+  delete parser.groups;
 
   edges = parser.edges = [];
 
@@ -100,14 +101,14 @@
         output += "# @runtime " + input.properties.environment.type + "\n";
       }
       Object.keys(input.properties).forEach(function (prop) {
-        if (!prop.match(/[a-zA-Z0-9]+/)) {
+        if (!prop.match(/^[a-zA-Z0-9\-_]+$/)) {
           return;
         }
         var propval = input.properties[prop];
         if (typeof propval !== 'string') {
           return;
         }
-        if (!propval.match(/[a-zA-Z0-9]+/)) {
+        if (!propval.match(/^[a-zA-Z0-9\-_]+$/)) {
           return;
         }
         output += "# @" + prop + " " + propval + '\n';
@@ -206,11 +207,17 @@
 
   parser.getResult = function () {
     var result = {
-      processes: nodes,
-      connections: parser.processEdges(),
-      inports: parser.inports,
-      outports: parser.outports
+      inports: parser.inports || {},
+      outports: parser.outports || {},
+      groups: parser.groups || [],
+      processes: nodes || {},
+      connections: parser.processEdges()
     };
+
+    if (parser.properties) {
+      result.properties = parser.properties;
+    }
+    result.caseSensitive = options.caseSensitive || false;
 
     var validateSchema = parser.validateSchema; // default
     if (typeof(options.validateSchema) !== 'undefined') { validateSchema = options.validateSchema; } // explicit option
@@ -224,7 +231,6 @@
         throw new Error("fbp: Did not validate againt graph schema:\n" + JSON.stringify(validation.errors, null, 2));
       }
     }
-    result.caseSensitive = options.caseSensitive;
 
     if (typeof options.validateContents === 'undefined' || options.validateContents) {
       parser.validateContents(result);
@@ -250,6 +256,20 @@
     }
     return result;
   }
+
+  parser.registerAnnotation = function (key, value) {
+    if (!parser.properties) {
+      parser.properties = {};
+    }
+
+    if (key === 'runtime') {
+      parser.properties.environment = {};
+      parser.properties.environment.type = value;
+      return;
+    }
+
+    parser.properties[key] = value;
+  };
 
   parser.registerInports = function (node, port, pub) {
     if (!parser.inports) {
@@ -334,6 +354,7 @@ line
   / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / _ "DEFAULT_INPORT=" name:portName _ LineTerminator? { defaultInPort = name}
   / _ "DEFAULT_OUTPORT=" name:portName _ LineTerminator? { defaultOutPort = name}
+  / annotation:annotation { return parser.registerAnnotation(annotation[0], annotation[1]); }
   / comment [\n\r\u2028\u2029]?
   / _ [\n\r\u2028\u2029]
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
@@ -394,6 +415,9 @@ component
 
 compMeta
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
+
+annotation
+  = "#" __ "@" key:[a-zA-Z0-9\-_]+ __ value:[a-zA-Z0-9\-_]+ { return [key.join(''), value.join('')]; }
 
 port
   = portname:portName portindex:(portIndex)? {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }}
