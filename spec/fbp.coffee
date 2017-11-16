@@ -181,6 +181,56 @@ describe 'FBP parser', ->
       it 'should contain no exports', ->
         chai.expect(graphData.exports).to.be.an 'undefined'
 
+  describe 'with multiple arrayport connections on same line', ->
+    fbpData = """
+    'test 1' -> IN[0] Mux(mux) OUT[0] -> IN Display(console)
+    'test 2' -> IN[1] Mux OUT[1] -> IN Display
+    """
+    graphData = null
+    it 'should produce a graph JSON object', ->
+      graphData = parser.parse fbpData, caseSensitive: true
+      chai.expect(graphData).to.be.an 'object'
+      chai.expect(graphData.processes).to.be.an 'object'
+      chai.expect(graphData.connections).to.be.an 'array'
+    describe 'the generated graph', ->
+      it 'should contain two nodes', ->
+        chai.expect(graphData.processes).to.have.keys [
+          'Mux'
+          'Display'
+        ]
+      it 'should contain two IIPs', ->
+        iips = graphData.connections.filter (conn) -> conn.data
+        chai.expect(iips.length).to.equal 2
+        chai.expect(iips[0].data).to.eql 'test 1'
+        chai.expect(iips[0].tgt).to.eql
+          process: 'Mux'
+          port: 'IN'
+          index: 0
+        chai.expect(iips[1].data).to.eql 'test 2'
+        chai.expect(iips[1].tgt).to.eql
+          process: 'Mux'
+          port: 'IN'
+          index: 1
+      it 'should contain two regular connections', ->
+        connections = graphData.connections.filter (conn) -> conn.src
+        chai.expect(connections.length).to.equal 2
+        chai.expect(connections[0].src).to.eql
+          process: 'Mux'
+          port: 'OUT'
+          index: 0
+        chai.expect(connections[0].tgt).to.eql
+          process: 'Display'
+          port: 'IN'
+        chai.expect(connections[1].src).to.eql
+          process: 'Mux'
+          port: 'OUT'
+          index: 1
+        chai.expect(connections[1].tgt).to.eql
+          process: 'Display'
+          port: 'IN'
+      it 'should contain no exports', ->
+        chai.expect(graphData.exports).to.be.an 'undefined'
+
   describe 'with FBP string containing an IIP with whitespace', ->
     fbpData = """
     'foo Bar BAZ' -> IN Display(Output)
