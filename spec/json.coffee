@@ -344,13 +344,16 @@ describe 'JSON to FBP parser', ->
     fbpData = """
 # @runtime foo
 # @name ReadSomefile
+
 "somefile" -> SOURCE Read(ReadFile)
+
     """
     graphData =
       caseSensitive: false
       name: 'ReadSomefile'
-      environment:
-        type: 'foo'
+      properties:
+        environment:
+          type: 'foo'
       inports: {}
       outports: {}
       groups: []
@@ -368,5 +371,4 @@ describe 'JSON to FBP parser', ->
       chai.expect(serialized).to.equal fbpData
     it 'should produce expected FBP graph', ->
       serialized = parser.parse fbpData
-      console.log graphData
       chai.expect(serialized).to.eql graphData
