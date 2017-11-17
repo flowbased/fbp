@@ -34,7 +34,7 @@
       Object.keys(graph.inports).forEach(function (port) {
         var portDef = graph.inports[port];
         if (!graph.processes[portDef.process]) {
-          throw new Error('Inport "' + port + '" is connected to an undefined target node');
+          throw new Error('Inport "' + port + '" is connected to an undefined target node "' + portDef.process + '"');
         }
       });
     }
@@ -43,7 +43,7 @@
       Object.keys(graph.outports).forEach(function (port) {
         var portDef = graph.outports[port];
         if (!graph.processes[portDef.process]) {
-          throw new Error('Inport "' + port + '" is connected to an undefined source node');
+          throw new Error('Outport "' + port + '" is connected to an undefined source node "' + portDef.process + '"');
         }
       });
     }
@@ -52,12 +52,12 @@
       graph.connections.forEach(function (edge) {
         if (edge.tgt && !graph.processes[edge.tgt.process]) {
           if (edge.data) {
-            throw new Error('IIP containing "' + edge.data + '" is connected to an undefined target node');
+            throw new Error('IIP containing "' + edge.data + '" is connected to an undefined target node "' + edge.tgt.process + '"');
           }
-          throw new Error('Edge from "' + edge.src.process + '" port "' + edge.src.port + '" is connected to an undefined target node');
+          throw new Error('Edge from "' + edge.src.process + '" port "' + edge.src.port + '" is connected to an undefined target node "' + edge.tgt.process + '"');
         }
         if (edge.src && !graph.processes[edge.src.process]) {
-          throw new Error('Edge to "' + edge.tgt.process + '" port "' + edge.tgt.port + '" is connected to an undefined source node');
+          throw new Error('Edge to "' + edge.tgt.process + '" port "' + edge.tgt.port + '" is connected to an undefined source node "' + edge.src.process + '"');
         }
       });
     }
