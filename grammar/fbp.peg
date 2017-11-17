@@ -353,13 +353,16 @@ line
   / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / _ "DEFAULT_INPORT=" name:portName _ LineTerminator? { defaultInPort = name}
   / _ "DEFAULT_OUTPORT=" name:portName _ LineTerminator? { defaultOutPort = name}
-  / annotation:annotation [\n\r\u2028\u2029] { return parser.registerAnnotation(annotation[0], annotation[1]); }
-  / comment [\n\r\u2028\u2029]?
-  / _ [\n\r\u2028\u2029]
+  / annotation:annotation newline { return parser.registerAnnotation(annotation[0], annotation[1]); }
+  / comment newline?
+  / _ newline
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
 
 LineTerminator
-  = _ ","? comment? [\n\r\u2028\u2029]?
+  = _ ","? comment? newline?
+
+newline
+  = [\n\r\u2028\u2029]
 
 comment
   = _ "#" (anychar)*
