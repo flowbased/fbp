@@ -105,3 +105,15 @@ Read() OUT -> IN Split(SplitStr:foo=bar,baz=123)
 ```
 
 In this case the *Split* node would contain the metadata keys `foo` and `baz` with values `bar` and `123`.
+
+### Annotations
+
+FBP graphs also support annotations for specifying things like graph name, description, icon, or the FBP runtime to be used for executing the graph.
+
+The syntax for annotations is `# @name value`, for example:
+
+```fbp
+# @runtime noflo-nodejs
+# @name ReadSomefile
+'somefile' -> SOURCE Read(ReadFile)
+```

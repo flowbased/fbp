@@ -276,66 +276,153 @@ describe 'JSON to FBP parser', ->
     it 'should produce a graph JSON object', ->
       fbpData = parser.serialize jsonData
       jsonFromFbp = parser.parse fbpData, caseSensitive:true
+    it 'should have retained properties', ->
+      fbpData = parser.serialize jsonData
+      jsonFromFbp = parser.parse fbpData, caseSensitive:true
+      chai.expect(jsonFromFbp.properties).to.eql JSON.parse(jsonData).properties
 
-describe 'roundtrip with FBP string with inports and outports', ->
-  fbpData = """
-  INPORT=Read.IN:FILENAME
-  INPORT=Display.OPTIONS:OPTIONS
-  OUTPORT=Display.OUT:OUT
-  Read(ReadFile) OUT -> IN Display(Output)
-  """
-  graphData = null
-  graphData2 = null
-  it 'should produce a graph JSON object', ->
-    # $1 fbp -> json
-    graphData = parser.parse fbpData, caseSensitive:true
-    chai.expect(graphData).to.be.an 'object'
+  describe 'roundtrip with FBP string with inports and outports', ->
+    fbpData = """
+    INPORT=Read.IN:FILENAME
+    INPORT=Display.OPTIONS:OPTIONS
+    OUTPORT=Display.OUT:OUT
+    Read(ReadFile) OUT -> IN Display(Output)
+    """
+    graphData = null
+    graphData2 = null
+    it 'should produce a graph JSON object', ->
+      # $1 fbp -> json
+      graphData = parser.parse fbpData, caseSensitive:true
+      chai.expect(graphData).to.be.an 'object'
 
-    # json -> fbp
-    jsonGraph = parser.serialize graphData
+      # json -> fbp
+      jsonGraph = parser.serialize graphData
 
-    # fbp -> json
-    graphData2 = parser.parse jsonGraph, caseSensitive:true
+      # fbp -> json
+      graphData2 = parser.parse jsonGraph, caseSensitive:true
 
-    # $2 json -> fbp
-    fbpData2 = parser.serialize graphData2
+      # $2 json -> fbp
+      fbpData2 = parser.serialize graphData2
 
-    # remove the formatting
-    fbpData = fbpData.replace /(\n)+/g, ""
-    fbpData2 = fbpData2.replace /(\n)+/g, ""
+      # remove the formatting
+      fbpData = fbpData.replace /(\n)+/g, ""
+      fbpData2 = fbpData2.replace /(\n)+/g, ""
 
-    # make sure $1 and $2 match
-    chai.expect(fbpData).to.equal fbpData2
+      # make sure $1 and $2 match
+      chai.expect(fbpData).to.equal fbpData2
 
-  describe 'the generated graph', ->
-    it 'should contain two nodes', ->
-      chai.expect(graphData2.processes).to.eql
+    describe 'the generated graph', ->
+      it 'should contain two nodes', ->
+        chai.expect(graphData2.processes).to.eql
+          Read:
+            component: 'ReadFile'
+          Display:
+            component: 'Output'
+      it 'should contain no legacy exports', ->
+        chai.expect(graphData2.exports).to.be.an 'undefined'
+      it 'should contain a single connection', ->
+        chai.expect(graphData2.connections).to.be.an 'array'
+        chai.expect(graphData2.connections.length).to.equal 1
+        chai.expect(graphData2.connections[0]).to.eql
+          src:
+            process: 'Read'
+            port: 'OUT'
+          tgt:
+            process: 'Display'
+            port: 'IN'
+      it 'should contain two inports', ->
+        chai.expect(graphData2.inports).to.be.an 'object'
+        chai.expect(graphData2.inports.FILENAME).to.eql
+          process: 'Read'
+          port: 'IN'
+        chai.expect(graphData2.inports.OPTIONS).to.eql
+          process: 'Display'
+          port: 'OPTIONS'
+      it 'should contain an outport', ->
+        chai.expect(graphData2.outports).to.be.an 'object'
+        chai.expect(graphData2.outports.OUT).to.eql
+          process: 'Display'
+          port: 'OUT'
+
+  describe 'annotations', ->
+    fbpData = """
+# @runtime foo
+# @name ReadSomefile
+
+"somefile" -> SOURCE Read(ReadFile)
+
+    """
+    graphData =
+      caseSensitive: false
+      properties:
+        name: 'ReadSomefile'
+        environment:
+          type: 'foo'
+      inports: {}
+      outports: {}
+      groups: []
+      processes:
         Read:
           component: 'ReadFile'
-        Display:
-          component: 'Output'
-    it 'should contain no legacy exports', ->
-      chai.expect(graphData2.exports).to.be.an 'undefined'
-    it 'should contain a single connection', ->
-      chai.expect(graphData2.connections).to.be.an 'array'
-      chai.expect(graphData2.connections.length).to.equal 1
-      chai.expect(graphData2.connections[0]).to.eql
+      connections: [
+        data: 'somefile'
+        tgt:
+          process: 'Read'
+          port: 'source'
+      ]
+    it 'should produce expected FBP string', ->
+      serialized = parser.serialize graphData
+      chai.expect(serialized).to.equal fbpData
+    it 'should produce expected FBP graph', ->
+      serialized = parser.parse fbpData
+      chai.expect(serialized).to.eql graphData
+
+  describe 'annotations in case sensitive graph', ->
+    fbpData = """
+# @runtime foo
+# @name ReadSomefile
+INPORT=Read.Encoding:FileEncoding
+OUTPORT=Read.Out:Result
+
+"somefile" -> SourceCode Read(ReadFile)
+Read Errors -> TryAgain Read
+
+    """
+    graphData =
+      caseSensitive: true
+      properties:
+        name: 'ReadSomefile'
+        environment:
+          type: 'foo'
+      inports:
+        FileEncoding:
+          process: 'Read'
+          port: 'Encoding'
+      outports:
+        Result:
+          process: 'Read'
+          port: 'Out'
+      groups: []
+      processes:
+        Read:
+          component: 'ReadFile'
+      connections: [
+        data: 'somefile'
+        tgt:
+          process: 'Read'
+          port: 'SourceCode'
+      ,
         src:
           process: 'Read'
-          port: 'OUT'
+          port: 'Errors'
         tgt:
-          process: 'Display'
-          port: 'IN'
-    it 'should contain two inports', ->
-      chai.expect(graphData2.inports).to.be.an 'object'
-      chai.expect(graphData2.inports.FILENAME).to.eql
-        process: 'Read'
-        port: 'IN'
-      chai.expect(graphData2.inports.OPTIONS).to.eql
-        process: 'Display'
-        port: 'OPTIONS'
-    it 'should contain an outport', ->
-      chai.expect(graphData2.outports).to.be.an 'object'
-      chai.expect(graphData2.outports.OUT).to.eql
-        process: 'Display'
-        port: 'OUT'
+          process: 'Read'
+          port: 'TryAgain'
+      ]
+    it 'should produce expected FBP string', ->
+      serialized = parser.serialize graphData
+      chai.expect(serialized).to.equal fbpData
+    it 'should produce expected FBP graph', ->
+      serialized = parser.parse fbpData,
+        caseSensitive: true
+      chai.expect(serialized).to.eql graphData

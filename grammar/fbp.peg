@@ -9,15 +9,59 @@
   var defaultInPort = "IN", defaultOutPort = "OUT";
 
   parser = this;
-  delete parser.exports;
+  delete parser.properties;
   delete parser.inports;
   delete parser.outports;
+  delete parser.groups;
 
   edges = parser.edges = [];
 
   nodes = {};
 
   var serialize, indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  parser.validateContents = function(graph, options) {
+    // Ensure all nodes have a component
+    if (graph.processes) {
+      Object.keys(graph.processes).forEach(function (node) {
+        if (!graph.processes[node].component) {
+          throw new Error('Node "' + node + '" does not have a component defined');
+        }
+      });
+    }
+    // Ensure all inports point to existing nodes
+    if (graph.inports) {
+      Object.keys(graph.inports).forEach(function (port) {
+        var portDef = graph.inports[port];
+        if (!graph.processes[portDef.process]) {
+          throw new Error('Inport "' + port + '" is connected to an undefined target node "' + portDef.process + '"');
+        }
+      });
+    }
+    // Ensure all outports point to existing nodes
+    if (graph.outports) {
+      Object.keys(graph.outports).forEach(function (port) {
+        var portDef = graph.outports[port];
+        if (!graph.processes[portDef.process]) {
+          throw new Error('Outport "' + port + '" is connected to an undefined source node "' + portDef.process + '"');
+        }
+      });
+    }
+    // Ensure all edges have nodes defined
+    if (graph.connections) {
+      graph.connections.forEach(function (edge) {
+        if (edge.tgt && !graph.processes[edge.tgt.process]) {
+          if (edge.data) {
+            throw new Error('IIP containing "' + edge.data + '" is connected to an undefined target node "' + edge.tgt.process + '"');
+          }
+          throw new Error('Edge from "' + edge.src.process + '" port "' + edge.src.port + '" is connected to an undefined target node "' + edge.tgt.process + '"');
+        }
+        if (edge.src && !graph.processes[edge.src.process]) {
+          throw new Error('Edge to "' + edge.tgt.process + '" port "' + edge.tgt.port + '" is connected to an undefined source node "' + edge.src.process + '"');
+        }
+      });
+    }
+  };
 
   parser.serialize = function(graph) {
     var conn, getInOutName, getName, i, inPort, input, len, name, namedComponents, outPort, output, process, ref, ref1, ref2, src, srcName, srcPort, srcProcess, tgt, tgtName, tgtPort, tgtProcess;
@@ -51,20 +95,38 @@
       }
       return name;
     };
+    if (input.properties) {
+      if (input.properties.environment && input.properties.environment.type) {
+        output += "# @runtime " + input.properties.environment.type + "\n";
+      }
+      Object.keys(input.properties).forEach(function (prop) {
+        if (!prop.match(/^[a-zA-Z0-9\-_]+$/)) {
+          return;
+        }
+        var propval = input.properties[prop];
+        if (typeof propval !== 'string') {
+          return;
+        }
+        if (!propval.match(/^[a-zA-Z0-9\-_\s\.]+$/)) {
+          return;
+        }
+        output += "# @" + prop + " " + propval + '\n';
+      });
+    }
     ref = input.inports;
     for (name in ref) {
       inPort = ref[name];
       process = getInOutName(name, inPort);
-      name = name.toUpperCase();
-      inPort.port = inPort.port.toUpperCase();
+      name = input.caseSensitive ? name : name.toUpperCase();
+      inPort.port = input.caseSensitive ? inPort.port : inPort.port.toUpperCase();
       output += "INPORT=" + process + "." + inPort.port + ":" + name + "\n";
     }
     ref1 = input.outports;
     for (name in ref1) {
       outPort = ref1[name];
       process = getInOutName(name, inPort);
-      name = name.toUpperCase();
-      outPort.port = outPort.port.toUpperCase();
+      name = input.caseSensitive ? name : name.toUpperCase();
+      outPort.port = input.caseSensitive ? outPort.port : outPort.port.toUpperCase();
       output += "OUTPORT=" + process + "." + outPort.port + ":" + name + "\n";
     }
     output += "\n";
@@ -72,7 +134,7 @@
     for (i = 0, len = ref2.length; i < len; i++) {
       conn = ref2[i];
       if (conn.data != null) {
-        tgtPort = conn.tgt.port.toUpperCase();
+        tgtPort = input.caseSensitive ? conn.tgt.port : conn.tgt.port.toUpperCase();
         tgtName = conn.tgt.process;
         tgtProcess = input.processes[tgtName].component;
         tgt = getName(tgtName);
@@ -82,7 +144,7 @@
         }
         output += '"' + conn.data + '"' + (" -> " + tgtPort + " " + tgt + "\n");
       } else {
-        srcPort = conn.src.port.toUpperCase();
+        srcPort = input.caseSensitive ? conn.src.port : conn.src.port.toUpperCase();
         srcName = conn.src.process;
         srcProcess = input.processes[srcName].component;
         src = getName(srcName);
@@ -90,7 +152,7 @@
           src += "(" + srcProcess + ")";
           namedComponents.push(srcProcess);
         }
-        tgtPort = conn.tgt.port.toUpperCase();
+        tgtPort = input.caseSensitive ? conn.tgt.port : conn.tgt.port.toUpperCase();
         tgtName = conn.tgt.process;
         tgtProcess = input.processes[tgtName].component;
         tgt = getName(tgtName);
@@ -144,11 +206,17 @@
 
   parser.getResult = function () {
     var result = {
-      processes: nodes,
-      connections: parser.processEdges(),
-      inports: parser.inports,
-      outports: parser.outports
+      inports: parser.inports || {},
+      outports: parser.outports || {},
+      groups: parser.groups || [],
+      processes: nodes || {},
+      connections: parser.processEdges()
     };
+
+    if (parser.properties) {
+      result.properties = parser.properties;
+    }
+    result.caseSensitive = options.caseSensitive || false;
 
     var validateSchema = parser.validateSchema; // default
     if (typeof(options.validateSchema) !== 'undefined') { validateSchema = options.validateSchema; } // explicit option
@@ -162,7 +230,11 @@
         throw new Error("fbp: Did not validate againt graph schema:\n" + JSON.stringify(validation.errors, null, 2));
       }
     }
-    result.caseSensitive = options.caseSensitive;
+
+    if (typeof options.validateContents === 'undefined' || options.validateContents) {
+      parser.validateContents(result);
+    }
+
     return result;
   }
 
@@ -183,6 +255,20 @@
     }
     return result;
   }
+
+  parser.registerAnnotation = function (key, value) {
+    if (!parser.properties) {
+      parser.properties = {};
+    }
+
+    if (key === 'runtime') {
+      parser.properties.environment = {};
+      parser.properties.environment.type = value;
+      return;
+    }
+
+    parser.properties[key] = value;
+  };
 
   parser.registerInports = function (node, port, pub) {
     if (!parser.inports) {
@@ -267,12 +353,16 @@ line
   / _ "OUTPORT=" node:node "." port:portName ":" pub:portName _ LineTerminator? {return parser.registerOutports(node,port,pub)}
   / _ "DEFAULT_INPORT=" name:portName _ LineTerminator? { defaultInPort = name}
   / _ "DEFAULT_OUTPORT=" name:portName _ LineTerminator? { defaultOutPort = name}
-  / comment [\n\r\u2028\u2029]?
-  / _ [\n\r\u2028\u2029]
+  / annotation:annotation newline { return parser.registerAnnotation(annotation[0], annotation[1]); }
+  / comment newline?
+  / _ newline
   / _ edges:connection _ LineTerminator? {return parser.registerEdges(edges);}
 
 LineTerminator
-  = _ ","? comment? [\n\r\u2028\u2029]?
+  = _ ","? comment? newline?
+
+newline
+  = [\n\r\u2028\u2029]
 
 comment
   = _ "#" (anychar)*
@@ -327,6 +417,9 @@ component
 
 compMeta
   = ":" meta:[a-zA-Z/=_,0-9]+  {return meta}
+
+annotation
+  = "#" __ "@" key:[a-zA-Z0-9\-_]+ __ value:[a-zA-Z0-9\-_ \.]+ { return [key.join(''), value.join('')]; }
 
 port
   = portname:portName portindex:(portIndex)? {return { port: options.caseSensitive? portname : portname.toLowerCase(), index: portindex != null ? portindex : undefined }}
