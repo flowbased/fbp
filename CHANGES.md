@@ -1,3 +1,9 @@
+# fbp 1.7.0 - released 17.11.2017
+
+* Added support for annotations like `# @runtime noflo-nodejs` or `# @name SomeComponent`
+* Added basic validation for parsed graphs to find issues with misnamed or misconfigured components
+* Fixed JSON-to-FBP serialization with case sensitive graphs
+
 # fbp 1.6.0 - released 03.11.2017
 
 * Removed support for deprecated `EXPORT` keyword
