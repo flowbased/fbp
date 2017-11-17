@@ -423,12 +423,9 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should fail', ->
-      try
+      chai.expect(->
         graphData = parser.parse fbpData, caseSensitive:true
-      catch e
-        chai.expect(e.message).to.be.a 'string'
-        return
-      throw new Error 'Expected an error'
+      ).to.throw Error
 
   describe 'with FBP string containing node metadata', ->
     fbpData = """
@@ -727,39 +724,27 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should fail', ->
-      try
+      chai.expect(->
         graphData = parser.parse fbpData, caseSensitive:true
-      catch e
-        chai.expect(e).to.be.an 'error'
-        chai.expect(e.message).to.contain 'connected to an undefined source node'
-        return
-      throw new Error 'Expected an error'
+      ).to.throw Error, 'Edge to "_core_Output_1" port "IN" is connected to an undefined source node "instanceMissingComponentName"'
   describe 'with FBP string with IIP sent to node that doesn\'t have a component defined', ->
     fbpData = """
     'localhost' -> IN instanceMissingComponentName
     """
     graphData = null
     it 'should fail', ->
-      try
+      chai.expect(->
         graphData = parser.parse fbpData, caseSensitive:true
-      catch e
-        chai.expect(e).to.be.an 'error'
-        chai.expect(e.message).to.contain 'connected to an undefined target node'
-        return
-      throw new Error 'Expected an error'
+      ).to.throw Error, 'IIP containing "localhost" is connected to an undefined target node "instanceMissingComponentName"'
   describe 'with FBP string with target node that doesn\'t have a component defined', ->
     fbpData = """
     a(A)->b(B) ->c(C)-> d(D)->e
     """
     graphData = null
     it 'should fail', ->
-      try
+      chai.expect(->
         graphData = parser.parse fbpData, caseSensitive:true
-      catch e
-        chai.expect(e).to.be.an 'error'
-        chai.expect(e.message).to.contain 'connected to an undefined target node'
-        return
-      throw new Error 'Expected an error'
+      ).to.throw Error, 'Edge from "d" port "OUT" is connected to an undefined target node "e"'
   describe 'with FBP string with exported inport pointing to non-existing node', ->
     fbpData = """
     INPORT=noexist.IN:broken
@@ -768,13 +753,9 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should fail', ->
-      try
+      chai.expect(->
         graphData = parser.parse fbpData, caseSensitive:true
-      catch e
-        chai.expect(e).to.be.an 'error'
-        chai.expect(e.message).to.contain 'connected to an undefined target node'
-        return
-      throw new Error 'Expected an error'
+      ).to.throw Error, 'Inport "broken" is connected to an undefined target node "noexist"'
   describe 'with FBP string with exported outport pointing to non-existing node', ->
     fbpData = """
     INPORT=exist.IN:works
@@ -783,13 +764,9 @@ describe 'FBP parser', ->
     """
     graphData = null
     it 'should fail', ->
-      try
+      chai.expect(->
         graphData = parser.parse fbpData, caseSensitive:true
-      catch e
-        chai.expect(e).to.be.an 'error'
-        chai.expect(e.message).to.contain 'connected to an undefined source node'
-        return
-      throw new Error 'Expected an error'
+      ).to.throw Error, 'Outport "broken" is connected to an undefined source node "noexist"'
   describe 'with FBP string containing a runtime annotation', ->
     fbpData = """
     # @runtime foo
