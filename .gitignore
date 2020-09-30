@@ -4,3 +4,4 @@
 /spec/*.js
 /spec/result.xml
 /.nyc_output/
+package-lock.json
