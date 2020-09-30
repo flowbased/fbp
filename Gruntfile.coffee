@@ -42,6 +42,11 @@ module.exports = ->
         options:
           reporter: 'spec'
 
+    # BDD tests on browser
+    karma:
+      unit:
+        configFile: 'karma.config.js'
+
     # CoffeeScript compilation
     coffee:
       spec:
@@ -53,13 +58,6 @@ module.exports = ->
         dest: 'spec'
         ext: '.js'
 
-    # BDD tests on browser
-    mocha_phantomjs:
-      options:
-        reporter: 'spec'
-        failWithOutput: true
-      all: ['spec/runner.html']
-
   # Grunt plugins used for building
   @loadNpmTasks 'grunt-yaml'
   @loadNpmTasks 'grunt-peg'
@@ -67,10 +65,10 @@ module.exports = ->
 
   # Grunt plugins used for testing
   @loadNpmTasks 'grunt-mocha-test'
+  @loadNpmTasks 'grunt-karma'
   @loadNpmTasks 'grunt-contrib-coffee'
-  @loadNpmTasks 'grunt-mocha-phantomjs'
   @loadNpmTasks 'grunt-contrib-watch'
 
   @registerTask 'build', ['peg', 'yaml', 'noflo_browser']
-  @registerTask 'test', ['build', 'coffee', 'mochaTest', 'mocha_phantomjs']
+  @registerTask 'test', ['build', 'coffee', 'mochaTest', 'karma']
   @registerTask 'default', ['build']
