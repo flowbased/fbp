@@ -1,4 +1,4 @@
-FBP flow definition language parser [![Build Status](https://travis-ci.org/flowbased/fbp.png?branch=master)](https://travis-ci.org/flowbased/fbp) [![Build status](https://ci.appveyor.com/api/projects/status/cye5ylmhfybnb8t9)](https://ci.appveyor.com/project/bergie/fbp) [![Greenkeeper badge](https://badges.greenkeeper.io/flowbased/fbp.svg)](https://greenkeeper.io/) [![Coverage Status](https://coveralls.io/repos/github/flowbased/fbp/badge.svg?branch=master)](https://coveralls.io/github/flowbased/fbp?branch=master)
+FBP flow definition language parser
 ===================================
 
 The *fbp* library provides a parser for a domain-specific language for flow-based-programming (FBP),
