@@ -1,6 +1,6 @@
 /node_modules/
 .DS_Store
-/browser/fbp.js
+/browser/
 /spec/*.js
 /spec/result.xml
 /.nyc_output/

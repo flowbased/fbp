@@ -2,7 +2,7 @@
 // vim: set filetype=javascript:
 var path = require('path');
 var fs = require('fs');
-var parser = require('../lib/fbp');
+var parser = require('../lib/index');
 
 var caseFlag = '--case-sensitive',
     caseSensitive = false;
