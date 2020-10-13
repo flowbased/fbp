@@ -42,7 +42,7 @@
   "scripts": {
     "test": "nyc grunt test"
   },
-  "main": "./lib/fbp",
+  "main": "./lib/index",
   "bin": {
     "fbp": "./bin/fbp"
   },

@@ -1,5 +1,5 @@
 var exported = {
-  fbp: require('../lib/fbp.js')
+  fbp: require('../lib/index.js')
 };
 
 if (window) {
