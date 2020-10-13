@@ -1,3 +1,7 @@
+# fbp 1.8.0 - released 13.10.2020
+
+* Fixed availability of the JSON-to-FBP serializer
+
 # fbp 1.7.0 - released 17.11.2017
 
 * Added support for annotations like `# @runtime noflo-nodejs` or `# @name SomeComponent`
