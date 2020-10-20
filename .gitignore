@@ -1,7 +1,6 @@
 /node_modules/
 .DS_Store
 /browser/fbp.*
-/spec/*.js
 /spec/result.xml
 /.nyc_output/
 package-lock.json
