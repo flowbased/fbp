@@ -1,9 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
-module.exports = function() {
+module.exports = function () {
   // Project configuration
   this.initConfig({
     pkg: this.file.readJSON('package.json'),
@@ -12,8 +7,8 @@ module.exports = function() {
     peg: {
       fbp: {
         src: 'grammar/fbp.peg',
-        dest: 'lib/fbp.js'
-      }
+        dest: 'lib/fbp.js',
+      },
     },
 
     yaml: {
@@ -22,33 +17,33 @@ module.exports = function() {
           expand: true,
           cwd: 'schemata/',
           src: '*.yaml',
-          dest: 'schema/'
-        }
-        ]
-      }
+          dest: 'schema/',
+        },
+        ],
+      },
     },
 
     // Build the browser Component
     noflo_browser: {
       build: {
         files: {
-          'browser/fbp.js': ['browser/entry.js']
+          'browser/fbp.js': ['browser/entry.js'],
         },
         options: {
           manifest: {
             runtimes: ['noflo'],
             discover: true,
             recursive: true,
-            silent: true
-          }
-        }
-      }
+            silent: true,
+          },
+        },
+      },
     },
 
     // Automated recompilation and testing when developing
     watch: {
       files: ['spec/*.js', 'grammar/*.peg'],
-      tasks: ['test']
+      tasks: ['test'],
     },
 
     // BDD tests on Node.js
@@ -56,16 +51,16 @@ module.exports = function() {
       nodejs: {
         src: ['spec/*.js'],
         options: {
-          reporter: 'spec'
-        }
-      }
+          reporter: 'spec',
+        },
+      },
     },
 
     // BDD tests on browser
     karma: {
       unit: {
-        configFile: 'karma.config.js'
-      }
+        configFile: 'karma.config.js',
+      },
     },
   });
 
@@ -81,5 +76,5 @@ module.exports = function() {
 
   this.registerTask('build', ['peg', 'yaml', 'noflo_browser']);
   this.registerTask('test', ['build', 'mochaTest', 'karma']);
-  return this.registerTask('default', ['build']);
+  this.registerTask('default', ['build']);
 };

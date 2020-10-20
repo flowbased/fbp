@@ -1,67 +1,63 @@
-var chai, parser;
+let chai; let parser;
 
 if (typeof process !== 'undefined' && process.execPath && process.execPath.indexOf('node') !== -1) {
   if (!chai) {
+    // eslint-disable-next-line global-require
     chai = require('chai');
   }
+  // eslint-disable-next-line global-require
   parser = require('../lib/index');
-  parser.validateSchema = true; // validate schema for every test on node.js. Don't have tv4 in the browser build
+  // validate schema for every test on node.js. Don't have tv4 in the browser build
+  parser.validateSchema = true;
 } else {
+  // eslint-disable-next-line
   parser = require('fbp');
 }
 
-describe('JSON to FBP parser', function() {
-  it('should provide a parse method', function() {
+describe('JSON to FBP parser', () => {
+  it('should provide a parse method', () => {
     chai.expect(parser.parse).to.be.a('function');
-    return chai.expect(parser.serialize).to.be.a('function');
+    chai.expect(parser.serialize).to.be.a('function');
   });
-  describe('roundtrip', function() {
-    return describe('with simple FBP string', function() {
-      var fbpData, graphData, graphData2, graphString, roundTrippedFbpData;
-      fbpData = `'8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)
+  describe('roundtrip', () => describe('with simple FBP string', () => {
+    const fbpData = `'8003' -> LISTEN WebServer(HTTP/Server) REQUEST -> IN Profiler(HTTP/Profiler) OUT -> IN Authentication(HTTP/BasicAuth)
 Authentication() OUT -> IN GreetUser(HelloController) OUT[0] -> IN[0] WriteResponse(HTTP/WriteResponse) OUT -> IN Send(HTTP/SendResponse)
 'hello.jade' -> SOURCE ReadTemplate(ReadFile) OUT -> TEMPLATE Render(Template)
 GreetUser() DATA -> OPTIONS Render() OUT -> STRING WriteResponse()`;
-      roundTrippedFbpData = "";
-      graphString = "";
-      graphData = null;
-      graphData2 = null;
-      it('should produce a graph JSON object', function() {
-        var fbp2;
-        // fbp -> json
-        graphData = parser.parse(fbpData, {
-          caseSensitive: true
-        });
-        chai.expect(graphData).to.be.an('object');
-        chai.expect(graphData.caseSensitive).to.equal(true);
-        // json -> fbp
-        roundTrippedFbpData = parser.serialize(graphData);
-        // fbp -> json
-        graphData2 = parser.parse(roundTrippedFbpData, {
-          caseSensitive: true
-        });
-        // json -> fbp, to test
-        fbp2 = parser.serialize(graphData2);
-        return chai.expect(roundTrippedFbpData).to.equal(fbp2);
+    let roundTrippedFbpData = '';
+    let graphData = null;
+    let graphData2 = null;
+    it('should produce a graph JSON object', () => {
+      // fbp -> json
+      graphData = parser.parse(fbpData, {
+        caseSensitive: true,
       });
-      return describe('the generated graph', function() {
-        it('should contain eight nodes', function() {
-          chai.expect(graphData2.processes).to.be.an('object');
-          return chai.expect(graphData2.processes).to.have.keys(['WebServer', 'Profiler', 'Authentication', 'GreetUser', 'WriteResponse', 'Send', 'ReadTemplate', 'Render']);
-        });
-        it('should contain ten edges and IIPs', function() {
-          chai.expect(graphData2.connections).to.be.an('array');
-          return chai.expect(graphData2.connections.length).to.equal(10);
-        });
-        return it('should contain no exports', function() {
-          return chai.expect(graphData2.exports).to.be.an('undefined');
-        });
+      chai.expect(graphData).to.be.an('object');
+      chai.expect(graphData.caseSensitive).to.equal(true);
+      // json -> fbp
+      roundTrippedFbpData = parser.serialize(graphData);
+      // fbp -> json
+      graphData2 = parser.parse(roundTrippedFbpData, {
+        caseSensitive: true,
       });
+      // json -> fbp, to test
+      const fbp2 = parser.serialize(graphData2);
+      chai.expect(roundTrippedFbpData).to.equal(fbp2);
     });
-  });
-  describe('with flowhub json graph (from ingress c-base table)', function() {
-    var graphData, graphData2, graphString, jsonData, roundTrippedFbpData;
-    jsonData = `{
+    describe('the generated graph', () => {
+      it('should contain eight nodes', () => {
+        chai.expect(graphData2.processes).to.be.an('object');
+        chai.expect(graphData2.processes).to.have.keys(['WebServer', 'Profiler', 'Authentication', 'GreetUser', 'WriteResponse', 'Send', 'ReadTemplate', 'Render']);
+      });
+      it('should contain ten edges and IIPs', () => {
+        chai.expect(graphData2.connections).to.be.an('array');
+        chai.expect(graphData2.connections.length).to.equal(10);
+      });
+      it('should contain no exports', () => chai.expect(graphData2.exports).to.be.an('undefined'));
+    });
+  }));
+  describe('with flowhub json graph (from ingress c-base table)', () => {
+    const jsonData = `{
     "properties": {
         "name": "ConfigPaths",
         "environment": {
@@ -267,150 +263,135 @@ GreetUser() DATA -> OPTIONS Render() OUT -> STRING WriteResponse()`;
         }
     ]
 }`;
-    roundTrippedFbpData = "";
-    graphString = "";
-    graphData = null;
-    graphData2 = null;
-    it('should produce a graph JSON object', function() {
-      var fbpData, jsonFromFbp;
-      fbpData = parser.serialize(jsonData);
-      return jsonFromFbp = parser.parse(fbpData, {
-        caseSensitive: true
+    it('should produce a graph JSON object', () => {
+      const fbpData = parser.serialize(jsonData);
+      const jsonFromFbp = parser.parse(fbpData, {
+        caseSensitive: true,
       });
+      chai.expect(jsonFromFbp).to.be.an('object');
     });
-    return it('should have retained properties', function() {
-      var fbpData, jsonFromFbp;
-      fbpData = parser.serialize(jsonData);
-      jsonFromFbp = parser.parse(fbpData, {
-        caseSensitive: true
+    it('should have retained properties', () => {
+      const fbpData = parser.serialize(jsonData);
+      const jsonFromFbp = parser.parse(fbpData, {
+        caseSensitive: true,
       });
-      return chai.expect(jsonFromFbp.properties).to.eql(JSON.parse(jsonData).properties);
+      chai.expect(jsonFromFbp.properties).to.eql(JSON.parse(jsonData).properties);
     });
   });
-  describe('roundtrip with FBP string with inports and outports', function() {
-    var fbpData, graphData, graphData2;
-    fbpData = `INPORT=Read.IN:FILENAME
+  describe('roundtrip with FBP string with inports and outports', () => {
+    let fbpData = `INPORT=Read.IN:FILENAME
 INPORT=Display.OPTIONS:OPTIONS
 OUTPORT=Display.OUT:OUT
 Read(ReadFile) OUT -> IN Display(Output)`;
-    graphData = null;
-    graphData2 = null;
-    it('should produce a graph JSON object', function() {
-      var fbpData2, jsonGraph;
+    let graphData = null;
+    let graphData2 = null;
+    it('should produce a graph JSON object', () => {
       // $1 fbp -> json
       graphData = parser.parse(fbpData, {
-        caseSensitive: true
+        caseSensitive: true,
       });
       chai.expect(graphData).to.be.an('object');
       // json -> fbp
-      jsonGraph = parser.serialize(graphData);
+      const jsonGraph = parser.serialize(graphData);
       // fbp -> json
       graphData2 = parser.parse(jsonGraph, {
-        caseSensitive: true
+        caseSensitive: true,
       });
       // $2 json -> fbp
-      fbpData2 = parser.serialize(graphData2);
+      let fbpData2 = parser.serialize(graphData2);
       // remove the formatting
-      fbpData = fbpData.replace(/(\n)+/g, "");
-      fbpData2 = fbpData2.replace(/(\n)+/g, "");
+      fbpData = fbpData.replace(/(\n)+/g, '');
+      fbpData2 = fbpData2.replace(/(\n)+/g, '');
       // make sure $1 and $2 match
-      return chai.expect(fbpData).to.equal(fbpData2);
+      chai.expect(fbpData).to.equal(fbpData2);
     });
-    return describe('the generated graph', function() {
-      it('should contain two nodes', function() {
-        return chai.expect(graphData2.processes).to.eql({
-          Read: {
-            component: 'ReadFile'
-          },
-          Display: {
-            component: 'Output'
-          }
-        });
-      });
-      it('should contain no legacy exports', function() {
-        return chai.expect(graphData2.exports).to.be.an('undefined');
-      });
-      it('should contain a single connection', function() {
+    describe('the generated graph', () => {
+      it('should contain two nodes', () => chai.expect(graphData2.processes).to.eql({
+        Read: {
+          component: 'ReadFile',
+        },
+        Display: {
+          component: 'Output',
+        },
+      }));
+      it('should contain no legacy exports', () => chai.expect(graphData2.exports).to.be.an('undefined'));
+      it('should contain a single connection', () => {
         chai.expect(graphData2.connections).to.be.an('array');
         chai.expect(graphData2.connections.length).to.equal(1);
-        return chai.expect(graphData2.connections[0]).to.eql({
+        chai.expect(graphData2.connections[0]).to.eql({
           src: {
             process: 'Read',
-            port: 'OUT'
+            port: 'OUT',
           },
           tgt: {
             process: 'Display',
-            port: 'IN'
-          }
+            port: 'IN',
+          },
         });
       });
-      it('should contain two inports', function() {
+      it('should contain two inports', () => {
         chai.expect(graphData2.inports).to.be.an('object');
         chai.expect(graphData2.inports.FILENAME).to.eql({
           process: 'Read',
-          port: 'IN'
+          port: 'IN',
         });
-        return chai.expect(graphData2.inports.OPTIONS).to.eql({
+        chai.expect(graphData2.inports.OPTIONS).to.eql({
           process: 'Display',
-          port: 'OPTIONS'
+          port: 'OPTIONS',
         });
       });
-      return it('should contain an outport', function() {
+      it('should contain an outport', () => {
         chai.expect(graphData2.outports).to.be.an('object');
-        return chai.expect(graphData2.outports.OUT).to.eql({
+        chai.expect(graphData2.outports.OUT).to.eql({
           process: 'Display',
-          port: 'OUT'
+          port: 'OUT',
         });
       });
     });
   });
-  describe('annotations', function() {
-    var fbpData, graphData;
-    fbpData = `# @runtime foo
+  describe('annotations', () => {
+    const fbpData = `# @runtime foo
 # @name ReadSomefile
 
 "somefile" -> SOURCE Read(ReadFile)
 `;
-    graphData = {
+    const graphData = {
       caseSensitive: false,
       properties: {
         name: 'ReadSomefile',
         environment: {
-          type: 'foo'
-        }
+          type: 'foo',
+        },
       },
       inports: {},
       outports: {},
       groups: [],
       processes: {
         Read: {
-          component: 'ReadFile'
-        }
+          component: 'ReadFile',
+        },
       },
       connections: [
         {
           data: 'somefile',
           tgt: {
             process: 'Read',
-            port: 'source'
-          }
-        }
-      ]
+            port: 'source',
+          },
+        },
+      ],
     };
-    it('should produce expected FBP string', function() {
-      var serialized;
-      serialized = parser.serialize(graphData);
-      return chai.expect(serialized).to.equal(fbpData);
+    it('should produce expected FBP string', () => {
+      const serialized = parser.serialize(graphData);
+      chai.expect(serialized).to.equal(fbpData);
     });
-    return it('should produce expected FBP graph', function() {
-      var serialized;
-      serialized = parser.parse(fbpData);
-      return chai.expect(serialized).to.eql(graphData);
+    it('should produce expected FBP graph', () => {
+      const serialized = parser.parse(fbpData);
+      chai.expect(serialized).to.eql(graphData);
     });
   });
-  return describe('annotations in case sensitive graph', function() {
-    var fbpData, graphData;
-    fbpData = `# @runtime foo
+  describe('annotations in case sensitive graph', () => {
+    const fbpData = `# @runtime foo
 # @name ReadSomefile
 INPORT=Read.Encoding:FileEncoding
 OUTPORT=Read.Out:Result
@@ -418,63 +399,61 @@ OUTPORT=Read.Out:Result
 "somefile" -> SourceCode Read(ReadFile)
 Read Errors -> TryAgain Read
 `;
-    graphData = {
+    const graphData = {
       caseSensitive: true,
       properties: {
         name: 'ReadSomefile',
         environment: {
-          type: 'foo'
-        }
+          type: 'foo',
+        },
       },
       inports: {
         FileEncoding: {
           process: 'Read',
-          port: 'Encoding'
-        }
+          port: 'Encoding',
+        },
       },
       outports: {
         Result: {
           process: 'Read',
-          port: 'Out'
-        }
+          port: 'Out',
+        },
       },
       groups: [],
       processes: {
         Read: {
-          component: 'ReadFile'
-        }
+          component: 'ReadFile',
+        },
       },
       connections: [
         {
           data: 'somefile',
           tgt: {
             process: 'Read',
-            port: 'SourceCode'
-          }
+            port: 'SourceCode',
+          },
         },
         {
           src: {
             process: 'Read',
-            port: 'Errors'
+            port: 'Errors',
           },
           tgt: {
             process: 'Read',
-            port: 'TryAgain'
-          }
-        }
-      ]
+            port: 'TryAgain',
+          },
+        },
+      ],
     };
-    it('should produce expected FBP string', function() {
-      var serialized;
-      serialized = parser.serialize(graphData);
-      return chai.expect(serialized).to.equal(fbpData);
+    it('should produce expected FBP string', () => {
+      const serialized = parser.serialize(graphData);
+      chai.expect(serialized).to.equal(fbpData);
     });
-    return it('should produce expected FBP graph', function() {
-      var serialized;
-      serialized = parser.parse(fbpData, {
-        caseSensitive: true
+    it('should produce expected FBP graph', () => {
+      const serialized = parser.parse(fbpData, {
+        caseSensitive: true,
       });
-      return chai.expect(serialized).to.eql(graphData);
+      chai.expect(serialized).to.eql(graphData);
     });
   });
 });
