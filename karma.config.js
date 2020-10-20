@@ -10,6 +10,7 @@ module.exports = (config) => {
     ],
     files: [
       'browser/fbp.js',
+      'spec/utils/inject.js',
       'spec/*.js',
     ],
     browsers: ['ChromeHeadless'],

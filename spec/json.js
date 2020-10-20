@@ -1,17 +1,6 @@
-let chai; let parser;
-
 if (typeof process !== 'undefined' && process.execPath && process.execPath.indexOf('node') !== -1) {
-  if (!chai) {
-    // eslint-disable-next-line global-require
-    chai = require('chai');
-  }
-  // eslint-disable-next-line global-require
-  parser = require('../lib/index');
   // validate schema for every test on node.js. Don't have tv4 in the browser build
   parser.validateSchema = true;
-} else {
-  // eslint-disable-next-line
-  parser = require('fbp');
 }
 
 describe('JSON to FBP parser', () => {

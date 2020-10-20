@@ -52,6 +52,7 @@ module.exports = function () {
         src: ['spec/*.js'],
         options: {
           reporter: 'spec',
+          require: 'spec/utils/inject.js',
         },
       },
     },
