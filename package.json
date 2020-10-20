@@ -16,8 +16,12 @@
   "devDependencies": {
     "chai": "^4.0.2",
     "coveralls": "^3.0.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-chai": "0.0.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-mocha": "^8.0.0",
     "grunt": "^1.0.1",
-    "grunt-contrib-coffee": "^2.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-karma": "^4.0.0",
     "grunt-mocha-test": "^0.13.2",
@@ -40,6 +44,7 @@
   },
   "keywords": [],
   "scripts": {
+    "pretest": "eslint *.js lib/index.js lib/serialize.js spec/*.js",
     "test": "nyc grunt test"
   },
   "main": "./lib/index",
