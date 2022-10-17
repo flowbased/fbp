@@ -34,7 +34,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
-    "mocha": "^8.1.3",
+    "mocha": "^10.1.0",
     "noflo-component-loader": "^0.4.0",
     "noflo-webpack-config": "^2.0.2",
     "nyc": "^15.1.0",
